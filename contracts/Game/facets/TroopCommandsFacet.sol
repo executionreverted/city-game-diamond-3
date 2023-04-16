@@ -13,4 +13,5 @@ contract TroopCommandsFacet is Modifiers {
     function attack(uint squadId, Target target, uint targetSquadId) external {
         LibTroopCommands.attack(squadId, target, targetSquadId);
     }
+    
 }

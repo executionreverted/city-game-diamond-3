@@ -1,17 +1,28 @@
 // SPDX-License-Identifier: GPL3.0
 
 pragma solidity ^0.8.18;
-
+import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import {LibAppStorage, AppStorage, Modifiers} from "../libraries/LibAppStorage.sol";
 import {LibTroopsManager} from "../libraries/LibTroopsManager.sol";
+import {LibTroops} from "../libraries/LibTroops.sol";
 import {Coords} from "../shared/WorldStructs.sol";
-import {Squad, Purpose} from "../shared/TroopsStructs.sol";
+import {Squad, Purpose, Troop} from "../shared/TroopsStructs.sol";
 import {Resource} from "../shared/ResourceEnums.sol";
 import "../shared/Errors.sol";
 
 contract TroopsManagerFacet is Modifiers {
+    using EnumerableSet for EnumerableSet.UintSet;
+
+    function troopInfo(uint troopId) external pure returns (Troop memory) {
+        return LibTroops.troopInfo(troopId);
+    }
+
     function troopsOfCity(uint cityId) external view returns (uint8[] memory, uint[] memory) {
         return LibTroopsManager.troopsOfCity(cityId);
+    }
+
+    function cityTroops(uint cityId, uint troopId) external view returns (uint) {
+        return s.CityTroops[cityId][troopId];
     }
 
     // function recruitTroop(uint cityId, uint troopId, uint amount) external onlyCityOwner(cityId) {
@@ -63,6 +74,6 @@ contract TroopsManagerFacet is Modifiers {
     }
 
     function cityActiveSquads(uint cityId) external view returns (uint[] memory) {
-        return LibTroopsManager.cityActiveSquads(cityId);
+        return s.CityActiveSquads[cityId].values();
     }
 }

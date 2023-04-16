@@ -14,7 +14,7 @@ contract GameInit {
 
     function init() external {
         s.domainSeparator = LibMeta.domainSeparator("Game", "V1");
-
+        s.GameManagers[msg.sender] = true;
         s.MAX_RESOURCE_ID = 5;
         s.MAX_BUILDING_ID = 50;
         s.POPULATION_CAP_PER_TOWNHALL_TIER = 500;

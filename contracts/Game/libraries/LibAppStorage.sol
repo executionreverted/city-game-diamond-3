@@ -92,7 +92,7 @@ struct AppStorage {
     uint BASE_IRON_MAX;
     uint BASE_FOOD_MAX;
     // researchs
-    
+
     uint RESEARCH_CENTER_ID;
     mapping(uint => uint[100]) CityResearchesValidAfter;
 }
@@ -112,6 +112,13 @@ library LibAppStorage {
 contract Modifiers {
     AppStorage internal s;
 
+    modifier onlyOwner() {
+        LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
+        address sender = LibMeta.msgSender();
+        require(sender == ds.contractOwner, "Only manager can call this function");
+        _;
+    }
+
     modifier onlyManager() {
         address sender = LibMeta.msgSender();
         require(s.GameManagers[sender], "Only manager can call this function");
@@ -120,7 +127,7 @@ contract Modifiers {
 
     modifier onlyCityOwner(uint cityId) {
         address sender = LibMeta.msgSender();
-        require(s.CityList[cityId].Operator == sender, "Only manager can call this function");
+        require(s.CityList[cityId].Operator == sender, "Only city operator can call this function");
         _;
     }
 }

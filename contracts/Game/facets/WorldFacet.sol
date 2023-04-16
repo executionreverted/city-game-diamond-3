@@ -17,8 +17,12 @@ contract WorldFacet is Modifiers {
         _coords = LibWorld.createCity(coords, pickClosest, race);
     }
 
-    function isPlotEmpty(Coords memory coords) public view returns (bool) {
-        Plot memory _plot = plotProps(coords);
+    function cityCoords(uint cityId) external view returns (Coords memory _coords) {
+        return s.CityCoords[cityId];
+    }
+
+    function isPlotEmpty(Coords memory coords) external view returns (bool) {
+        Plot memory _plot = LibWorld.plotProps(coords);
         return
             (_plot.Content.Type == PlotContentTypes.HABITABLE && !s.CoordsToPlot[coords.X][coords.Y].IsTaken) ||
             s.CoordsToCity[coords.X][coords.Y] == 0;
@@ -36,11 +40,11 @@ contract WorldFacet is Modifiers {
         return LibWorld.scanPlots(startX, endX, startY, endY);
     }
 
-    function distanceBetweenTwoPoints(Coords memory a, Coords memory b) public pure returns (uint) {
+    function distanceBetweenTwoPoints(Coords memory a, Coords memory b) external pure returns (uint) {
         return LibCalculator.calculateDistance(a, b);
     }
 
-    function plotProps(Coords memory _coords) public view returns (Plot memory _plot) {
+    function plotProps(Coords memory _coords) external view returns (Plot memory _plot) {
         return LibWorld.plotProps(_coords);
     }
 }

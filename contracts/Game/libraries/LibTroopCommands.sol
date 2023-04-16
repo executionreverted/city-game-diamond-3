@@ -9,6 +9,7 @@ import {Troop, Squad, Purpose, Target} from "../shared/TroopsStructs.sol";
 import {EnumerableSetUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol";
 // import "hardhat/console.sol";
 import {LibAppStorage, AppStorage} from "./LibAppStorage.sol";
+import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import {LibTroops} from "./LibTroops.sol";
 import {LibTroopsManager} from "./LibTroopsManager.sol";
 import {LibCities} from "./LibCities.sol";
@@ -110,8 +111,8 @@ library LibTroopCommands {
 
     function checkIfSquadOwned(Squad memory squad) internal view returns (bool) {
         AppStorage storage s = LibAppStorage.diamondStorage();
-        if (s.CityList[squad.ControlledBy].Operator != msg.sender) {
-            revert ErrorUnauthorized(msg.sender);
+        if (s.CityList[squad.ControlledBy].Operator != LibMeta.msgSender()) {
+            revert ErrorUnauthorized(LibMeta.msgSender());
         }
         return true;
     }

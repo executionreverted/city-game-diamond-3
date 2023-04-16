@@ -119,7 +119,7 @@ library LibWorld {
                 if (s.CoordsToCity[x][y] == 0) {
                     _coords.X = x;
                     _coords.Y = y;
-                    return _coords;
+                    break;
                 }
             }
         }

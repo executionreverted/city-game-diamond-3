@@ -1,11 +1,11 @@
 /* global ethers */
 /* eslint prefer-const: "off" */
 import { ethers, run } from 'hardhat';
-import { OwnershipFacet } from '../typechain-types';
+import { } from '../typechain-types';
 import { getSelectors, FacetCutAction } from './libraries/diamond'
 import { DeployUpgradeTaskArgs, FacetsAndAddSelectors, convertFacetAndSelectorsToString } from '../tasks/deployUpgrade';
 
-async function deployDiamond() {
+export async function deployDiamond() {
   const accounts = await ethers.getSigners()
   const contractOwner = accounts[0]
 
@@ -42,6 +42,7 @@ async function deployDiamond() {
     'WorldFacet',
     'ResearchsFacet',
     'ResearchManagerFacet',
+    'CalculatorFacet',
     // 'Test1Facet'
   ]
 
@@ -146,4 +147,3 @@ if (require.main === module) {
     })
 }
 
-exports.deployDiamond = deployDiamond

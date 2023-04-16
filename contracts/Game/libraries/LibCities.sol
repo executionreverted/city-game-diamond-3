@@ -19,8 +19,8 @@ library LibCities {
 
     function mint(address to, Coords memory _coords, Race _race) internal returns (uint) {
         AppStorage storage s = LibAppStorage.diamondStorage();
-        uint tokenId = s.tokenIds.length;
-        LibCities.mintCity(to, tokenId, _coords, _race);
+        uint tokenId = s.tokenIds.length + 1;
+        mintCity(to, tokenId, _coords, _race);
         return tokenId;
     }
 

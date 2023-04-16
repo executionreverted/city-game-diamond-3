@@ -79,7 +79,7 @@ contract CityNFTFacet is Modifiers {
     /// @return owner_ The address of the owner of the NFT
     function ownerOf(uint256 _tokenId) external view returns (address owner_) {
         owner_ = s.CityList[_tokenId].Operator;
-        require(owner_ != address(0), "CityNFTFacet: invalid _tokenId");
+        // require(owner_ != address(0), "CityNFTFacet: invalid _tokenId");
     }
 
     /// @notice Get the approved address for a single NFT

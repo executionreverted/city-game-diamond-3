@@ -7,3 +7,4 @@ artifacts
 typechain-types
 abi
 yarn-error.log
+gas-reporter.txt

@@ -10,6 +10,13 @@ import {LibResources} from "./LibResources.sol";
 import "../shared/Errors.sol";
 
 library LibCityManager {
+    event BuildingUpgraded(uint indexed cityId, uint indexed buildingId, uint newTier, uint when);
+    event CityCoordsUpdate(uint indexed cityId, Coords coords);
+    event CityRaceUpdate(uint indexed cityId, Race race);
+    event CityAliveUpdate(uint indexed cityId, bool value);
+    event CityPopulationUpdate(uint indexed cityId, uint population);
+
+   
     function race(uint cityId) internal view returns (Race) {
         AppStorage storage s = LibAppStorage.diamondStorage();
         return s.CityList[cityId].Race;
@@ -25,7 +32,49 @@ library LibCityManager {
     //     return s.CityList[cityId].CreationDate;
     // }
 
-    
+    function recruitPopulation(uint cityId) internal {
+        AppStorage storage s = LibAppStorage.diamondStorage();
+        City memory _city = s.CityList[cityId];
+        if (!_city.Alive) {
+            revert ErrorAssertion(_city.Alive, false);
+        }
+        uint _recruitable = calculateRecruitable(cityId);
+        if (_recruitable > 0) {
+            s.PopulationClaimDates[cityId] = block.timestamp + 1 days;
+            s.CityList[cityId].Population = _city.Population + _recruitable;
+        } else revert ErrorNull(_recruitable);
+        emit CityPopulationUpdate(cityId, _city.Population + _recruitable);
+    }
+
+    function calculateRecruitable(uint cityId) internal view returns (uint) {
+        AppStorage storage s = LibAppStorage.diamondStorage();
+        if (block.timestamp < s.PopulationClaimDates[cityId]) {
+            /* revert ErrorBadTiming(
+                PopulationClaimDates[cityId],
+                block.timestamp
+            ); */
+            return 0;
+        }
+
+        uint _recruitable;
+        City memory _city = s.CityList[cityId];
+
+        uint _townhallTier = s.BuildingLevels[cityId][0].Tier;
+        uint _housingsTier = s.BuildingLevels[cityId][8].Tier;
+        // fetch townhall lvl & housing, give bonus daily population, 4 townhall & 7 housing
+        _recruitable += _townhallTier;
+        _recruitable += _housingsTier * 2;
+        uint cap = _townhallTier * s.POPULATION_CAP_PER_TOWNHALL_TIER;
+        if (_city.Population + _recruitable >= cap) {
+            if (_city.Population <= cap) {
+                _recruitable = cap - _city.Population;
+            } else {
+                _recruitable = 0;
+            }
+        }
+        return _recruitable;
+    }
+
     function upgradeBuilding(uint cityId, uint buildingId) internal returns (bool) {
         AppStorage storage s = LibAppStorage.diamondStorage();
         uint MAX_RESOURCE_ID = s.MAX_RESOURCE_ID;
@@ -52,14 +101,14 @@ library LibCityManager {
         // implement research and reductions
         s.BuildingLevelActivationTime[cityId][buildingId] = Deadline;
 
-        // emit BuildingUpgraded(cityId, buildingId, currentTier + 1, Deadline);
+        emit BuildingUpgraded(cityId, buildingId, currentTier + 1, Deadline);
         return true;
     }
 
     function updateCityCoords(uint cityId, Coords memory _param) internal returns (bool) {
         AppStorage storage s = LibAppStorage.diamondStorage();
         s.CityList[cityId].Coords = _param;
-        // emit CityCoordsUpdate(cityId, _param);
+        emit CityCoordsUpdate(cityId, _param);
         return true;
     }
 
@@ -68,14 +117,14 @@ library LibCityManager {
         s.RacePopulation[uint(s.CityList[cityId].Race)]--;
         s.CityList[cityId].Race = _param;
         s.RacePopulation[uint(_param)]++;
-        // emit CityRaceUpdate(cityId, _param);
+        emit CityRaceUpdate(cityId, _param);
         return true;
     }
 
     function updateCityAlive(uint cityId, bool _param) internal returns (bool) {
         AppStorage storage s = LibAppStorage.diamondStorage();
         s.CityList[cityId].Alive = _param;
-        // emit CityAliveUpdate(cityId, _param);
+        emit CityAliveUpdate(cityId, _param);
         return true;
     }
 
@@ -87,12 +136,6 @@ library LibCityManager {
 
     function setCity(uint cityId, City memory _city) internal {
         AppStorage storage s = LibAppStorage.diamondStorage();
-        /*   require(
-            msg.sender == GameWorld ||
-                msg.sender == address(Cities) ||
-                msg.sender == address(TroopsManager),
-            "!"
-        ); */
         s.CityList[cityId] = _city;
         s.RacePopulation[uint(_city.Race)]++;
         s.BuildingLevels[cityId][0].Tier = 1;

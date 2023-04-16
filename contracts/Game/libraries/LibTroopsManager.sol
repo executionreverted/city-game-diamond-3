@@ -192,8 +192,8 @@ library LibTroopsManager {
         s.SquadsById[squadNonces] = newSquad;
         s.SquadsIdOnWorld[coords.X][coords.Y].add(squadNonces);
         s.CityActiveSquads[cityId].add(squadNonces);
+        s.squadNonces++;
         emit SquadMovement(cityId, squadNonces, coords, coords);
-        squadNonces++;
     }
 
     function callSquadBack(uint cityId, uint squadId) internal {
@@ -304,11 +304,6 @@ library LibTroopsManager {
             result[i] = s.SquadsById[squadIds[i]];
         }
         return result;
-    }
-
-    function cityActiveSquads(uint cityId) internal view returns (uint[] memory) {
-        AppStorage storage s = LibAppStorage.diamondStorage();
-        return s.CityActiveSquads[cityId].values();
     }
 
     function hasDupes(uint8[] memory arr) internal pure returns (bool) {

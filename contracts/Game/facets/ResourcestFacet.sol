@@ -8,6 +8,10 @@ import {LibResources} from "../libraries/LibResources.sol";
 import "../shared/Errors.sol";
 
 contract ResourcesFacet is Modifiers {
+    function addResource(uint cityId, Resource resource, uint _amount) external onlyManager {
+        LibResources.addResource(cityId, resource, _amount);
+    }
+
     function claimDailyTax(uint cityId) external onlyCityOwner(cityId) {
         LibResources.claimDailyTax(cityId);
     }
