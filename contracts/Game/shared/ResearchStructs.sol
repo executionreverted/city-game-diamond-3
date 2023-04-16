@@ -7,6 +7,7 @@ struct Research {
     uint TimeRequired;
     uint RequiredResearchId;
     uint MinResearchCenterLevel;
+    uint UtilityValue;
     uint[100] Cost;
     bool IsUnlocked;
 }

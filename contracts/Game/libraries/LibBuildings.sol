@@ -50,30 +50,30 @@ library LibBuildings {
     /* PRODUCTION BUILDING */
 
     function Forest() internal view returns (Building memory _baseBuilding) {
-        _baseBuilding.MaxTier = 5;
+        _baseBuilding.MaxTier = 10;
         _baseBuilding.RequiredResearchID = 1;
 
         // building time values
-        _baseBuilding.BaseTime = 13;
-        _baseBuilding.Coefficient = 10;
-        _baseBuilding.CoefficientRatio = 70; // 0,7
+        _baseBuilding.BaseTime = 720;
+        _baseBuilding.Coefficient = 25;
+        _baseBuilding.CoefficientRatio = 60; // 0,7
 
         // building resource cost values
-        _baseBuilding.BaseCosts.BaseGold = 20;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseWood = 15;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
-        _baseBuilding.BaseCosts.BaseStone = 20;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseIron = 20;
-        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseFood = 20;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseGold = 4013;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 2500;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 170;
+        _baseBuilding.BaseCosts.BaseWood = 10000;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 3000;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 180;
+        _baseBuilding.BaseCosts.BaseStone = 12000;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 3250;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 240;
+        _baseBuilding.BaseCosts.BaseIron = 8000;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 3250;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 2240;
+        _baseBuilding.BaseCosts.BaseFood = 12000;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 3250;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 240;
 
         _baseBuilding = enterResourceCost(_baseBuilding);
 
@@ -83,30 +83,30 @@ library LibBuildings {
     }
 
     function Farms() internal view returns (Building memory _baseBuilding) {
-        _baseBuilding.MaxTier = 5;
+        _baseBuilding.MaxTier = 10;
         _baseBuilding.RequiredResearchID = 1;
 
         // building time values
-        _baseBuilding.BaseTime = 13;
-        _baseBuilding.Coefficient = 10;
-        _baseBuilding.CoefficientRatio = 70; // 0,7
+        _baseBuilding.BaseTime = 720;
+        _baseBuilding.Coefficient = 25;
+        _baseBuilding.CoefficientRatio = 65; // 0,7
 
         // building resource cost values
-        _baseBuilding.BaseCosts.BaseGold = 20;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseWood = 15;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
-        _baseBuilding.BaseCosts.BaseStone = 20;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseIron = 20;
-        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseGold = 4013;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 2500;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 170;
+        _baseBuilding.BaseCosts.BaseWood = 14000;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 3000;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 180;
+        _baseBuilding.BaseCosts.BaseStone = 14000;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 3250;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 240;
+        _baseBuilding.BaseCosts.BaseIron = 10000;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 3250;
         _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseFood = 20;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseFood = 10000;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 3250;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 240;
 
         _baseBuilding = enterResourceCost(_baseBuilding);
 
@@ -116,30 +116,30 @@ library LibBuildings {
     }
 
     function Mines() internal view returns (Building memory _baseBuilding) {
-        _baseBuilding.MaxTier = 5;
+        _baseBuilding.MaxTier = 10;
         _baseBuilding.RequiredResearchID = 1;
 
         // building time values
-        _baseBuilding.BaseTime = 13;
-        _baseBuilding.Coefficient = 10;
+        _baseBuilding.BaseTime = 720;
+        _baseBuilding.Coefficient = 30;
         _baseBuilding.CoefficientRatio = 70; // 0,7
 
         // building resource cost values
-        _baseBuilding.BaseCosts.BaseGold = 20;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseWood = 15;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
-        _baseBuilding.BaseCosts.BaseStone = 20;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseIron = 20;
-        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseFood = 20;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseGold = 4013;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 2500;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 170;
+        _baseBuilding.BaseCosts.BaseWood = 14000;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 3000;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 180;
+        _baseBuilding.BaseCosts.BaseStone = 14000;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 3250;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 240;
+        _baseBuilding.BaseCosts.BaseIron = 8000;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 3250;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 240;
+        _baseBuilding.BaseCosts.BaseFood = 14000;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 3250;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 240;
 
         _baseBuilding = enterResourceCost(_baseBuilding);
 
@@ -149,30 +149,30 @@ library LibBuildings {
     }
 
     function Quarry() internal view returns (Building memory _baseBuilding) {
-        _baseBuilding.MaxTier = 5;
+        _baseBuilding.MaxTier = 10;
         _baseBuilding.RequiredResearchID = 1;
 
         // building time values
-        _baseBuilding.BaseTime = 13;
-        _baseBuilding.Coefficient = 10;
-        _baseBuilding.CoefficientRatio = 70; // 0,7
+        _baseBuilding.BaseTime = 720;
+        _baseBuilding.Coefficient = 35;
+        _baseBuilding.CoefficientRatio = 65; // 0,7
 
         // building resource cost values
-        _baseBuilding.BaseCosts.BaseGold = 20;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseWood = 15;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
-        _baseBuilding.BaseCosts.BaseStone = 20;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseIron = 20;
-        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseFood = 20;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseGold = 4013;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 2500;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 170;
+        _baseBuilding.BaseCosts.BaseWood = 14000;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 3000;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 180;
+        _baseBuilding.BaseCosts.BaseStone = 10000;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 3250;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 240;
+        _baseBuilding.BaseCosts.BaseIron = 11250;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 3250;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 240;
+        _baseBuilding.BaseCosts.BaseFood = 14000;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 3250;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 240;
 
         _baseBuilding = enterResourceCost(_baseBuilding);
 
@@ -183,30 +183,30 @@ library LibBuildings {
 
     /* UTILITY BUILDINGS */
     function TownHall() internal view returns (Building memory _baseBuilding) {
-        _baseBuilding.MaxTier = 5;
-        _baseBuilding.RequiredResearchID = 1;
+        _baseBuilding.MaxTier = 50;
+        // _baseBuilding.RequiredResearchID = ;
 
         // building time values
         _baseBuilding.BaseTime = 13;
-        _baseBuilding.Coefficient = 10;
+        _baseBuilding.Coefficient = 15;
         _baseBuilding.CoefficientRatio = 70; // 0,7
 
         // building resource cost values
-        _baseBuilding.BaseCosts.BaseGold = 20;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseWood = 15;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
-        _baseBuilding.BaseCosts.BaseStone = 20;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseIron = 20;
-        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseFood = 20;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseGold = 1486;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 1100;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 270;
+        _baseBuilding.BaseCosts.BaseWood = 5184;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 3800;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 75;
+        _baseBuilding.BaseCosts.BaseStone = 4320;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 3800;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 75;
+        _baseBuilding.BaseCosts.BaseIron = 4320;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 3800;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 75;
+        _baseBuilding.BaseCosts.BaseFood = 4320;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 3800;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 75;
 
         _baseBuilding = enterResourceCost(_baseBuilding);
 
@@ -216,30 +216,30 @@ library LibBuildings {
     }
 
     function Warehouse() internal view returns (Building memory _baseBuilding) {
-        _baseBuilding.MaxTier = 5;
-        _baseBuilding.RequiredResearchID = 1;
+        _baseBuilding.MaxTier = 25;
+        _baseBuilding.RequiredResearchID = 2;
 
         // building time values
-        _baseBuilding.BaseTime = 13;
-        _baseBuilding.Coefficient = 10;
-        _baseBuilding.CoefficientRatio = 70; // 0,7
+        _baseBuilding.BaseTime = 5;
+        _baseBuilding.Coefficient = 11;
+        _baseBuilding.CoefficientRatio = 50; // 0,7
 
         // building resource cost values
-        _baseBuilding.BaseCosts.BaseGold = 20;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseWood = 15;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
-        _baseBuilding.BaseCosts.BaseStone = 20;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseIron = 20;
-        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseFood = 20;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseGold = 516;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 300;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 20;
+        _baseBuilding.BaseCosts.BaseWood = 1800;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 1000;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 50;
+        _baseBuilding.BaseCosts.BaseStone = 1500;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 1000;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 50;
+        _baseBuilding.BaseCosts.BaseIron = 1500;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 1000;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 50;
+        _baseBuilding.BaseCosts.BaseFood = 1500;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 1000;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 50;
 
         _baseBuilding = enterResourceCost(_baseBuilding);
 
@@ -249,30 +249,30 @@ library LibBuildings {
     }
 
     function Barracks() internal view returns (Building memory _baseBuilding) {
-        _baseBuilding.MaxTier = 5;
-        _baseBuilding.RequiredResearchID = 1;
+        _baseBuilding.MaxTier = 15;
+        _baseBuilding.RequiredResearchID = 41;
 
         // building time values
-        _baseBuilding.BaseTime = 13;
-        _baseBuilding.Coefficient = 10;
-        _baseBuilding.CoefficientRatio = 70; // 0,7
+        _baseBuilding.BaseTime = 10;
+        _baseBuilding.Coefficient = 11;
+        _baseBuilding.CoefficientRatio = 60; // 0,7
 
         // building resource cost values
-        _baseBuilding.BaseCosts.BaseGold = 20;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseWood = 15;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
-        _baseBuilding.BaseCosts.BaseStone = 20;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseIron = 20;
-        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseFood = 20;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseGold = 602;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 350;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 50;
+        _baseBuilding.BaseCosts.BaseWood = 2100;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 650;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 30;
+        _baseBuilding.BaseCosts.BaseStone = 2000;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 700;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 30;
+        _baseBuilding.BaseCosts.BaseIron = 2160;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 750;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 30;
+        _baseBuilding.BaseCosts.BaseFood = 2160;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 750;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 30;
 
         _baseBuilding = enterResourceCost(_baseBuilding);
 
@@ -282,30 +282,30 @@ library LibBuildings {
     }
 
     function Workshop() internal view returns (Building memory _baseBuilding) {
-        _baseBuilding.MaxTier = 5;
-        _baseBuilding.RequiredResearchID = 1;
+        _baseBuilding.MaxTier = 10;
+        _baseBuilding.RequiredResearchID = 46;
 
         // building time values
-        _baseBuilding.BaseTime = 13;
-        _baseBuilding.Coefficient = 10;
+        _baseBuilding.BaseTime = 12;
+        _baseBuilding.Coefficient = 12;
         _baseBuilding.CoefficientRatio = 70; // 0,7
 
         // building resource cost values
-        _baseBuilding.BaseCosts.BaseGold = 20;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseWood = 15;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
-        _baseBuilding.BaseCosts.BaseStone = 20;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseIron = 20;
-        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseFood = 20;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseGold = 445;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 300;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 5;
+        _baseBuilding.BaseCosts.BaseWood = 1555;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 1000;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 30;
+        _baseBuilding.BaseCosts.BaseStone = 1100;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 750;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 30;
+        _baseBuilding.BaseCosts.BaseIron = 1500;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 1500;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 30;
+        _baseBuilding.BaseCosts.BaseFood = 1296;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 1000;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 30;
 
         _baseBuilding = enterResourceCost(_baseBuilding);
 
@@ -315,30 +315,30 @@ library LibBuildings {
     }
 
     function Housing() internal view returns (Building memory _baseBuilding) {
-        _baseBuilding.MaxTier = 5;
+        _baseBuilding.MaxTier = 50;
         _baseBuilding.RequiredResearchID = 1;
 
         // building time values
-        _baseBuilding.BaseTime = 13;
+        _baseBuilding.BaseTime = 5;
         _baseBuilding.Coefficient = 10;
-        _baseBuilding.CoefficientRatio = 70; // 0,7
+        _baseBuilding.CoefficientRatio = 50; // 0,7
 
         // building resource cost values
-        _baseBuilding.BaseCosts.BaseGold = 20;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseWood = 15;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
-        _baseBuilding.BaseCosts.BaseStone = 20;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseIron = 20;
-        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseFood = 20;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseGold = 1783;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 1350;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 27;
+        _baseBuilding.BaseCosts.BaseWood = 6220;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 4150;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 75;
+        _baseBuilding.BaseCosts.BaseStone = 5184;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 4250;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 75;
+        _baseBuilding.BaseCosts.BaseIron = 4350;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 3200;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 75;
+        _baseBuilding.BaseCosts.BaseFood = 5000;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 3500;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 75;
 
         _baseBuilding = enterResourceCost(_baseBuilding);
 
@@ -348,30 +348,30 @@ library LibBuildings {
     }
 
     function ResearchCenter() internal view returns (Building memory _baseBuilding) {
-        _baseBuilding.MaxTier = 5;
+        _baseBuilding.MaxTier = 10;
         _baseBuilding.RequiredResearchID = 1;
 
         // building time values
-        _baseBuilding.BaseTime = 13;
-        _baseBuilding.Coefficient = 10;
-        _baseBuilding.CoefficientRatio = 70; // 0,7
+        _baseBuilding.BaseTime = 10;
+        _baseBuilding.Coefficient = 15;
+        _baseBuilding.CoefficientRatio = 60; // 0,7
 
         // building resource cost values
-        _baseBuilding.BaseCosts.BaseGold = 20;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseWood = 15;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
-        _baseBuilding.BaseCosts.BaseStone = 20;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseIron = 20;
-        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseFood = 20;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseGold = 825;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 600;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 15;
+        _baseBuilding.BaseCosts.BaseWood = 2880;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 1500;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 50;
+        _baseBuilding.BaseCosts.BaseStone = 1700;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 1500;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 50;
+        _baseBuilding.BaseCosts.BaseIron = 2000;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 1300;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 50;
+        _baseBuilding.BaseCosts.BaseFood = 2600;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 1500;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 50;
 
         _baseBuilding = enterResourceCost(_baseBuilding);
 
@@ -382,29 +382,35 @@ library LibBuildings {
 
     function DefenseTower() internal view returns (Building memory _baseBuilding) {
         _baseBuilding.MaxTier = 5;
-        _baseBuilding.RequiredResearchID = 1;
+        _baseBuilding.UtilityValues = new uint[](_baseBuilding.MaxTier);
+        _baseBuilding.UtilityValues[0] = 1; // means at tier 1, it will have value of 5% for whatever it does
+        _baseBuilding.UtilityValues[1] = 2;
+        _baseBuilding.UtilityValues[2] = 3;
+        _baseBuilding.UtilityValues[3] = 4;
+        _baseBuilding.UtilityValues[4] = 5;
+        _baseBuilding.RequiredResearchID = 49;
 
         // building time values
-        _baseBuilding.BaseTime = 13;
-        _baseBuilding.Coefficient = 10;
+        _baseBuilding.BaseTime = 25;
+        _baseBuilding.Coefficient = 39;
         _baseBuilding.CoefficientRatio = 70; // 0,7
 
         // building resource cost values
-        _baseBuilding.BaseCosts.BaseGold = 20;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseWood = 15;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
-        _baseBuilding.BaseCosts.BaseStone = 20;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseIron = 20;
-        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseFood = 20;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseGold = 891;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 1000;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 20;
+        _baseBuilding.BaseCosts.BaseWood = 3110;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 2650;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 50;
+        _baseBuilding.BaseCosts.BaseStone = 2500;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 2600;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 50;
+        _baseBuilding.BaseCosts.BaseIron = 2200;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 1500;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 50;
+        _baseBuilding.BaseCosts.BaseFood = 1600;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 750;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 50;
 
         _baseBuilding = enterResourceCost(_baseBuilding);
 
@@ -414,30 +420,30 @@ library LibBuildings {
     }
 
     function TradingPost() internal view returns (Building memory _baseBuilding) {
-        _baseBuilding.MaxTier = 5;
-        _baseBuilding.RequiredResearchID = 1;
+        _baseBuilding.MaxTier = 10;
+        _baseBuilding.RequiredResearchID = 5;
 
         // building time values
-        _baseBuilding.BaseTime = 13;
-        _baseBuilding.Coefficient = 10;
-        _baseBuilding.CoefficientRatio = 70; // 0,7
+        _baseBuilding.BaseTime = 5;
+        _baseBuilding.Coefficient = 11;
+        _baseBuilding.CoefficientRatio = 60; // 0,7
 
         // building resource cost values
-        _baseBuilding.BaseCosts.BaseGold = 20;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseWood = 15;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
-        _baseBuilding.BaseCosts.BaseStone = 20;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseIron = 20;
-        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseFood = 20;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseGold = 516;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 300;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 15;
+        _baseBuilding.BaseCosts.BaseWood = 1800;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 1000;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 50;
+        _baseBuilding.BaseCosts.BaseStone = 1500;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 1000;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 50;
+        _baseBuilding.BaseCosts.BaseIron = 1500;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 1000;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 50;
+        _baseBuilding.BaseCosts.BaseFood = 1500;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 1000;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 50;
 
         _baseBuilding = enterResourceCost(_baseBuilding);
 
@@ -448,29 +454,29 @@ library LibBuildings {
 
     function Hatchery() internal view returns (Building memory _baseBuilding) {
         _baseBuilding.MaxTier = 5;
-        _baseBuilding.RequiredResearchID = 1;
+        _baseBuilding.RequiredResearchID = 7;
 
         // building time values
-        _baseBuilding.BaseTime = 13;
-        _baseBuilding.Coefficient = 10;
-        _baseBuilding.CoefficientRatio = 70; // 0,7
+        _baseBuilding.BaseTime = 15;
+        _baseBuilding.Coefficient = 50;
+        _baseBuilding.CoefficientRatio = 90; // 0,7
 
         // building resource cost values
-        _baseBuilding.BaseCosts.BaseGold = 20;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseWood = 15;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
-        _baseBuilding.BaseCosts.BaseStone = 20;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseIron = 20;
-        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseFood = 20;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseGold = 412;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 400;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 5;
+        _baseBuilding.BaseCosts.BaseWood = 1440;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 1500;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 20;
+        _baseBuilding.BaseCosts.BaseStone = 1200;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 1500;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 20;
+        _baseBuilding.BaseCosts.BaseIron = 1200;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 1500;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 20;
+        _baseBuilding.BaseCosts.BaseFood = 1200;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 1500;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 20;
 
         _baseBuilding = enterResourceCost(_baseBuilding);
 
@@ -480,30 +486,30 @@ library LibBuildings {
     }
 
     function WorldBossPortal() internal view returns (Building memory _baseBuilding) {
-        _baseBuilding.MaxTier = 5;
-        _baseBuilding.RequiredResearchID = 1;
+        _baseBuilding.MaxTier = 10;
+        _baseBuilding.RequiredResearchID = 23;
 
         // building time values
-        _baseBuilding.BaseTime = 13;
-        _baseBuilding.Coefficient = 10;
-        _baseBuilding.CoefficientRatio = 70; // 0,7
+        _baseBuilding.BaseTime = 30;
+        _baseBuilding.Coefficient = 45;
+        _baseBuilding.CoefficientRatio = 200; // 0,7
 
         // building resource cost values
-        _baseBuilding.BaseCosts.BaseGold = 20;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseWood = 15;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
-        _baseBuilding.BaseCosts.BaseStone = 20;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseIron = 20;
-        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseFood = 20;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseGold = 296;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 500;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 15;
+        _baseBuilding.BaseCosts.BaseWood = 1036;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 1000;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 50;
+        _baseBuilding.BaseCosts.BaseStone = 864;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 1000;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 50;
+        _baseBuilding.BaseCosts.BaseIron = 864;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 1000;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 50;
+        _baseBuilding.BaseCosts.BaseFood = 864;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 1000;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 50;
 
         _baseBuilding = enterResourceCost(_baseBuilding);
 
@@ -515,34 +521,34 @@ library LibBuildings {
     function Walls() internal view returns (Building memory _baseBuilding) {
         _baseBuilding.MaxTier = 5;
         _baseBuilding.UtilityValues = new uint[](_baseBuilding.MaxTier);
-        _baseBuilding.UtilityValues[0] = 5; // means at tier 1, it will have value of 5% for whatever it does
-        _baseBuilding.UtilityValues[1] = 7;
-        _baseBuilding.UtilityValues[2] = 9;
-        _baseBuilding.UtilityValues[3] = 11;
-        _baseBuilding.UtilityValues[4] = 15;
-        _baseBuilding.RequiredResearchID = 1;
+        _baseBuilding.UtilityValues[0] = 2; // means at tier 1, it will have value of 5% for whatever it does
+        _baseBuilding.UtilityValues[1] = 4;
+        _baseBuilding.UtilityValues[2] = 6;
+        _baseBuilding.UtilityValues[3] = 8;
+        _baseBuilding.UtilityValues[4] = 10;
+        _baseBuilding.RequiredResearchID = 44;
 
         // building time values
-        _baseBuilding.BaseTime = 13;
-        _baseBuilding.Coefficient = 10;
-        _baseBuilding.CoefficientRatio = 70; // 0,7
+        _baseBuilding.BaseTime = 30;
+        _baseBuilding.Coefficient = 45;
+        _baseBuilding.CoefficientRatio = 80; // 0,7
 
         // building resource cost values
-        _baseBuilding.BaseCosts.BaseGold = 20;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseWood = 15;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
-        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
-        _baseBuilding.BaseCosts.BaseStone = 20;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseIron = 20;
-        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
-        _baseBuilding.BaseCosts.BaseFood = 20;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
-        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseGold = 1100;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 850;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 30;
+        _baseBuilding.BaseCosts.BaseWood = 3840;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 2250;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 90;
+        _baseBuilding.BaseCosts.BaseStone = 5200;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 2500;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 90;
+        _baseBuilding.BaseCosts.BaseIron = 2700;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 1750;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 90;
+        _baseBuilding.BaseCosts.BaseFood = 1500;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 1250;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 75;
 
         _baseBuilding = enterResourceCost(_baseBuilding);
 
@@ -616,7 +622,7 @@ library LibBuildings {
         return _baseBuilding;
     }
 
-    function enterTimeCost(Building memory _baseBuilding) internal view returns (Building memory) {
+    function enterTimeCost(Building memory _baseBuilding) internal pure returns (Building memory) {
         // uint len = _baseBuilding.MaxTier + 1;
         uint[] memory timeRequired = new uint[](_baseBuilding.MaxTier);
         for (uint i = 1; i <= timeRequired.length; ) {

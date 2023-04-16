@@ -91,6 +91,10 @@ struct AppStorage {
     uint BASE_STONE_MAX;
     uint BASE_IRON_MAX;
     uint BASE_FOOD_MAX;
+    // researchs
+    
+    uint RESEARCH_CENTER_ID;
+    mapping(uint => uint[100]) CityResearchesValidAfter;
 }
 
 library LibAppStorage {

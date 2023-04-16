@@ -40,6 +40,8 @@ async function deployDiamond() {
     'TroopCommandsFacet',
     'TroopsManagerFacet',
     'WorldFacet',
+    'ResearchsFacet',
+    'ResearchManagerFacet',
     // 'Test1Facet'
   ]
 
