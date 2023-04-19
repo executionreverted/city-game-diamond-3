@@ -53,7 +53,7 @@ library LibTroopCommands {
         // roll random
 
         uint atkRoll = LibRNG.d1000(block.timestamp + atkWinChance);
-        uint defRoll = LibRNG.d1000(block.timestamp + defWinChance + 1);
+        uint defRoll = LibRNG.d1000(block.timestamp + atkWinChance + defWinChance + 1);
 
         if (atkRoll < atkWinChance && defRoll < defWinChance) {
             _result = 2;
@@ -70,7 +70,7 @@ library LibTroopCommands {
         finalizeFieldWar(_result, attacker, victim, attackerArmyPower, defenderArmyPower);
     }
 
-    function handleCityAttack(Squad memory attacker, uint cityId, uint squadPower, uint cityPower) internal {
+    function handleCityAttack(Squad memory attacker, uint cityId, uint squadPower, uint cityPower, uint capacity) internal {
         uint _result; // 0 ATK, 1 DEF, 2 DRAW
         uint atkWinChance = LibCalculator.attackerVictoryChance(squadPower, cityPower);
         uint defWinChance = LibCalculator.defenderVictoryChance(squadPower, cityPower);
@@ -88,7 +88,7 @@ library LibTroopCommands {
             _result = 2;
         }
 
-        finalizeCitySiege(_result, attacker, cityId, squadPower, cityPower);
+        finalizeCitySiege(_result, attacker, cityId, squadPower, cityPower, capacity);
     }
 
     function protect() internal {}
@@ -172,7 +172,7 @@ library LibTroopCommands {
         );
     }
 
-    function finalizeCitySiege(uint result, Squad memory attacker, uint cityId, uint atkArmyPower, uint defArmyPower) internal {
+    function finalizeCitySiege(uint result, Squad memory attacker, uint cityId, uint atkArmyPower, uint defArmyPower, uint capacity) internal {
         AppStorage storage s = LibAppStorage.diamondStorage();
         // 0 atk win, 1 def win, 2 draw
         /*
@@ -206,7 +206,7 @@ library LibTroopCommands {
         if (result == 1) plunder /= 3;
 
         if (result == 0 || result == 1) {
-            plunderResources(attacker, cityId, attacker.ControlledBy, plunder);
+            plunderResources(capacity, cityId, attacker.ControlledBy, plunder);
         } else revert("no win");
         emit CityFight(attacker.ID, attacker.ControlledBy, cityId, result, atkCasualties, defCasualties);
         /* if (result == 0) {
@@ -218,15 +218,8 @@ library LibTroopCommands {
         } */
     }
 
-    function plunderResources(Squad memory attacker, uint fromCity, uint toCity, uint percentage) internal {
+    function plunderResources(uint carryingCapacity, uint fromCity, uint toCity, uint percentage) internal {
         AppStorage storage s = LibAppStorage.diamondStorage();
-        uint carryingCapacity;
-
-        for (uint i = 0; i < attacker.TroopIds.length; i++) {
-            if (attacker.TroopAmounts[i] > 0) {
-                carryingCapacity += LibTroops.troopInfo(attacker.TroopIds[i]).Capacity * attacker.TroopAmounts[i];
-            }
-        }
 
         carryingCapacity /= s.MAX_RESOURCE_ID;
         if (carryingCapacity == 0) return;
