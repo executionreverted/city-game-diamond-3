@@ -7,8 +7,7 @@ import {Coords} from "../shared/WorldStructs.sol";
 import {Resource} from "../shared/ResourceEnums.sol";
 import {Troop, Squad, Purpose, Target} from "../shared/TroopsStructs.sol";
 import {EnumerableSetUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol";
-// import "hardhat/console.sol";
-import {LibAppStorage, AppStorage} from "./LibAppStorage.sol";
+import {LibAppStorage, AppStorage, MAX_TROOP_ID} from "./LibAppStorage.sol";
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import {LibTroops} from "./LibTroops.sol";
 import {LibTroopsManager} from "./LibTroopsManager.sol";
@@ -20,39 +19,23 @@ import {LibWorld} from "./LibWorld.sol";
 import {LibRNG} from "./LibRNG.sol";
 import "../shared/Errors.sol";
 
+// import "hardhat/console.sol";
+
 library LibTroopCommands {
     event PlotFight(uint indexed attackerSquadId, uint indexed victimSquadId, uint result, uint attackerCasualties, uint defenderCasualties);
-
-    // prevent atk to friendly squads
-    function attack(uint squadId, Target target, uint targetSquadId) internal {
-        Squad memory squad = LibTroopsManager.squadsById(squadId);
-        if (!squad.Active) {
-            revert ErrorAssertion(squad.Active, true);
-        }
-        checkIfSquadOwned(squad);
-        if (squad.Purpose != Purpose.ATTACK) {
-            revert ErrorAssertion(squad.Purpose != Purpose.ATTACK, false);
-        }
-        // implement if target == enemy squad
-        if (target == Target.SQUAD) {
-            // attack stuff
-            handleFieldBattle(squad, LibTroopsManager.squadsById(targetSquadId));
-        }
-        // implement if target == enemy city in this plot
-        else if (target == Target.CITY) {
-            // check if city exists in plot
-            // calculate battle functions
-        }
-        // implement if target == plot content in this plot
-        // npc fight, roll random enemy using plot seed
-        else if (target == Target.PLOT_CONTENT) {} else {
-            revert ErrorNull(0);
-        }
-    }
+    event CityFight(
+        uint indexed attackerSquadId,
+        uint atkCityId,
+        uint indexed defCityId,
+        uint result,
+        uint attackerCasualties,
+        uint defenderCasualties
+    );
+    event Plunder(uint indexed attackerCity, uint indexed defenderCity, uint plunderPercentage);
 
     function handleFieldBattle(Squad memory attacker, Squad memory victim) internal {
         checkIfTargetInRange(attacker.Position, victim.Position);
-        if (!victim.Active) {
+        if (victim.ActiveAfter == 0 || block.timestamp < victim.ActiveAfter) {
             revert ErrorAssertion(victim.Active, true);
         }
         uint _result; // 0 ATK, 1 DEF, 2 DRAW
@@ -95,6 +78,27 @@ library LibTroopCommands {
         // console.log(_result);
 
         finalizeFieldWar(_result, attacker, victim, attackerArmyPower, defenderArmyPower);
+    }
+
+    function handleCityAttack(Squad memory attacker, uint cityId, uint squadPower, uint cityPower) internal {
+        uint _result; // 0 ATK, 1 DEF, 2 DRAW
+        uint atkWinChance = LibCalculator.attackerVictoryChance(squadPower, cityPower);
+        uint defWinChance = LibCalculator.defenderVictoryChance(squadPower, cityPower);
+        uint atkRoll = LibRNG.d1000(block.timestamp + atkWinChance);
+        uint defRoll = LibRNG.d1000(block.timestamp + defWinChance + 1);
+        if (atkRoll < atkWinChance && defRoll < defWinChance) {
+            _result = 2;
+        } else if (atkRoll > atkWinChance && defRoll > defWinChance) {
+            _result = 2;
+        } else if (atkRoll > atkWinChance && defRoll < defWinChance) {
+            _result = 1;
+        } else if (atkRoll < atkWinChance && defRoll > defWinChance) {
+            _result = 0;
+        } else {
+            _result = 2;
+        }
+
+        finalizeCitySiege(_result, attacker, cityId, squadPower, cityPower);
     }
 
     function protect() internal {}
@@ -184,5 +188,73 @@ library LibTroopCommands {
             ((attackerAtk + attackerDef) * 2) + (attackerSiegeAtk + attackerSiegeDef) + attackerHp * 2,
             ((defenderAtk + defenderDef) * 2) + (defenderSiegeAtk + defenderSiegeDef) + defenderHp * 2
         );
+    }
+
+    function finalizeCitySiege(uint result, Squad memory attacker, uint cityId, uint atkArmyPower, uint defArmyPower) internal {
+        AppStorage storage s = LibAppStorage.diamondStorage();
+        // 0 atk win, 1 def win, 2 draw
+        /*
+        function attackerCasualties(
+        uint atkArmyPower,
+        uint defArmyPower,
+        bool atkHasWon,
+        bool draw
+    )  */
+        uint atkCasualties = LibCalculator.attackerCasualties(atkArmyPower, defArmyPower, result == 0, result == 2);
+        uint defCasualties = LibCalculator.defenderCasualties(atkArmyPower, defArmyPower, result == 0, result == 2);
+        uint plunder = LibCalculator.plunderAmountPercentage(atkArmyPower, defArmyPower);
+        // console.log("atkCasualties");
+        // console.log(atkCasualties);
+        // console.log("defCasualties");
+        // console.log(defCasualties);
+        // kill atk troops
+        bool attackerFullDead = true;
+        for (uint i = 0; i < attacker.TroopIds.length; i++) {
+            attacker.TroopAmounts[i] -= (attacker.TroopAmounts[i] * atkCasualties) / 100;
+            if (attackerFullDead && attacker.TroopAmounts[i] != 0) {
+                attackerFullDead = false;
+            }
+        }
+
+        // kill def troops
+
+        for (uint i = 0; i < MAX_TROOP_ID; i++) {
+            uint killed = (defCasualties * s.CityTroops[cityId][i]) / 100;
+            if (s.CityTroops[cityId][i] >= killed) s.CityTroops[cityId][i] -= killed;
+            else s.CityTroops[cityId][i] = 0;
+        }
+
+        // console.log("attackerFullDead");
+        // console.log(attackerFullDead);
+        // console.log("defenderFullDead");
+        // console.log(defenderFullDead);
+        LibTroopsManager.editSquad(attacker, attackerFullDead);
+        if (result == 1) plunder /= 3;
+
+        if (result == 0 || result == 1) {
+            plunderResources(cityId, attacker.ControlledBy, plunder);
+        }
+        emit CityFight(attacker.ID, attacker.ControlledBy, cityId, result, atkCasualties, defCasualties);
+        /* if (result == 0) {
+            // atk side win
+        } else if (result == 1) {
+            // def side win
+        } else if (result == 2) {
+            // draw
+        } */
+    }
+
+    function plunderResources(uint fromCity, uint toCity, uint percentage) internal {
+        AppStorage storage s = LibAppStorage.diamondStorage();
+        // console.log("plunder");
+        // console.log(percentage);
+        for (uint i = 0; i < s.MAX_RESOURCE_ID; i++) {
+            uint amountToDizz = (s.CityResources[fromCity][i] * percentage) / 1000;
+            // console.log(amountToDizz);
+            if (amountToDizz == 0) continue;
+            s.CityResources[fromCity][i] -= amountToDizz;
+            s.CityResources[toCity][i] += amountToDizz;
+        }
+        emit Plunder(fromCity, toCity, percentage);
     }
 }

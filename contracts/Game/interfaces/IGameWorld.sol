@@ -37,10 +37,6 @@ interface IGameWorld {
         uint8 race
     ) external returns (Coords memory _coords);
 
-    function distanceBetweenTwoPoints(
-        Coords memory a,
-        Coords memory b
-    ) external view returns (uint256);
 
     function isPlotEmpty(Coords memory coords) external view returns (bool);
 

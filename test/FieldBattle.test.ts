@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { time } from "@nomicfoundation/hardhat-network-helpers";
 import "hardhat-gas-reporter"
 import { BuildingsFacet, CalculatorFacet, CityManagerFacet, CityNFTFacet, ResourcesFacet, TroopCommandsFacet, TroopsManagerFacet, WorldFacet } from "../typechain-types";
-import { deployDiamond } from "../scripts/deploy";
+import { deployDiamond } from "./deploy";
 let cities: CityNFTFacet;
 let gameWorld: WorldFacet;
 let cityManager: CityManagerFacet;
@@ -160,6 +160,7 @@ describe("FieldBattle", function () {
         let resourceBalance = await resources.cityResources(cityId, foodId)
         const troopToSend = 20
         await troopsManager.sendSquadTo(cityId, coordsToSend, [0], [troopToSend], 2)
+
         let resourceAfter = await resources.cityResources(cityId, foodId)
 
         let squad = await troopsManager.squadsById(0)
@@ -208,7 +209,7 @@ describe("FieldBattle", function () {
         resourceBalance = await resources.cityResources(cityId, foodId)
         expect(squad.Position.X.eq(coordsToSend.X)).to.be.true
         expect(squad.Position.Y.eq(coordsToSend.Y)).to.be.true
-        await time.increase(distance.toNumber() + 1)
+        await time.increase(distance.toNumber() + 111)
         squad = await troopsManager.squadsById(1)
         expect(squad.Active).to.be.true
     });
@@ -228,15 +229,15 @@ describe("FieldBattle", function () {
 
         let tx = await troopCommands.attack(0, 0, 1)
         await tx.wait(1)
-        const txReceipt = await (cities.provider).getTransactionReceipt(tx.hash);
-        console.log(tx.hash);
-        let txGasUsed = txReceipt.cumulativeGasUsed
-        const gasCostEth = ethers.utils.formatEther(txReceipt.effectiveGasPrice.mul(txReceipt.gasUsed).toNumber());
-        console.log({
-            txGasUsed, gasUsed: txReceipt.gasUsed, gasPrice: txReceipt.effectiveGasPrice,
-            total: txReceipt.effectiveGasPrice.mul(txReceipt.gasUsed).toNumber(),
-            gasCostEth
-        });
+        // const txReceipt = await (cities.provider).getTransactionReceipt(tx.hash);
+        // console.log(tx.hash);
+        // let txGasUsed = txReceipt.cumulativeGasUsed
+        // const gasCostEth = ethers.utils.formatEther(txReceipt.effectiveGasPrice.mul(txReceipt.gasUsed).toNumber());
+        // console.log({
+        //     txGasUsed, gasUsed: txReceipt.gasUsed, gasPrice: txReceipt.effectiveGasPrice,
+        //     total: txReceipt.effectiveGasPrice.mul(txReceipt.gasUsed).toNumber(),
+        //     gasCostEth
+        // });
 
         squad1 = await troopsManager.squadsById(0)
         squad2 = await troopsManager.squadsById(1)
@@ -260,9 +261,9 @@ describe("FieldBattle", function () {
         );
 
         await time.increase(1000);
-        console.log("squad id 0", await (await troopsManager.squadsById(0)).TroopAmounts);
-        console.log("squad id 1", await (await troopsManager.squadsById(1)).TroopAmounts);
-        console.log("squad of my cities", await troopsManager.cityActiveSquads(cityId));
+        console.log("squad id 0 troop left", await (await troopsManager.squadsById(0)).TroopAmounts);
+        console.log("squad id 1 troop left", await (await troopsManager.squadsById(1)).TroopAmounts);
+        // console.log("squad of my cities", await troopsManager.cityActiveSquads(cityId));
 
     })
 

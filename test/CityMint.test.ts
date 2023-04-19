@@ -1,8 +1,8 @@
 import { ethers, upgrades } from "hardhat";
 import { expect } from "chai";
-import { deployDiamond } from "../scripts/deploy";
 import * as fs from 'fs'
 import { BuildingsFacet, CityManagerFacet, CityNFTFacet, ResourcesFacet, TroopsManagerFacet, WorldFacet } from "../typechain-types";
+import { deployDiamond } from "./deploy";
 let cities: CityNFTFacet;
 let gameWorld: WorldFacet;
 let cityManager: CityManagerFacet;

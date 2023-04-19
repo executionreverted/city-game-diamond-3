@@ -16,6 +16,7 @@ import {ITroopsManager} from "../interfaces/ITroopsManager.sol";
 import {ICalculator} from "../interfaces/ICalculator.sol";
 
 uint constant MAX_RACE_ID = 5;
+uint constant MAX_TROOP_ID = 100;
 // uint constant MAX_BUILDING_ID = 50;
 // uint constant MINTER_ROLE = 5;
 // uint constant MAX_RESOURCE_ID_VALUE = 5;
@@ -69,7 +70,7 @@ struct AppStorage {
     uint8 MAX_SQUADS_ON_PLOT;
     uint8 BARRACKS_ID; // TROOPS
     uint squadNonces;
-    mapping(uint => uint[100]) CityTroops;
+    mapping(uint => uint[MAX_TROOP_ID]) CityTroops;
     // movement stuff
     mapping(uint => Squad) SquadsById;
     mapping(int => mapping(int => EnumerableSet.UintSet)) SquadsIdOnWorld;

@@ -9,7 +9,7 @@ import {LibTroops} from "../libraries/LibTroops.sol";
 library LibCalculator {
     uint constant Precision = 3;
     uint constant Absolute = 10 ** Precision;
-    uint constant MaxPlunderPercentage = 400;
+    uint constant MaxPlunderPercentage = 400; // 1000
 
     /*     
         Army power = (Number of soldiers * Attack power * Defense power * Health) * Morale bonus

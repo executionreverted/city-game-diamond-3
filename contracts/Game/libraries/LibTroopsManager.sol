@@ -16,7 +16,6 @@ import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import "../shared/Errors.sol";
 
 library LibTroopsManager {
-    event Recruitment(uint indexed cityId, uint indexed troopId, uint amount);
     event SquadRemoved(uint indexed troopId);
     event SquadMovement(uint indexed cityId, uint indexed squadId, Coords from, Coords to);
     using EnumerableSet for EnumerableSet.UintSet;
@@ -42,112 +41,6 @@ library LibTroopsManager {
         }
 
         return (troopIds, amounts);
-    }
-
-    function recruitTroop(uint cityId, uint troopId, uint amount) internal {
-        if (amount == 0) {
-            revert ErrorNull(amount);
-        }
-        AppStorage storage s = LibAppStorage.diamondStorage();
-        // check requirements, burn and set resource modifier
-        Troop memory _troop = LibTroops.troopInfo(troopId);
-        // int _modifier;
-        uint _cityPopulation = s.CityList[cityId].Population;
-        uint _population;
-
-        // MinBarracksLevel
-        uint barracksLevel = s.BuildingLevels[cityId][s.BARRACKS_ID].Tier;
-        if (barracksLevel < _troop.Cost.MinBarracksLevel) {
-            revert ErrorAssertion(barracksLevel < _troop.Cost.MinBarracksLevel, false);
-        }
-        // check population
-        uint MAX_RESOURCE_ID = s.MAX_RESOURCE_ID;
-        uint[] memory _costs = new uint[](MAX_RESOURCE_ID);
-        for (uint i = 0; i < MAX_RESOURCE_ID; i++) {
-            _costs[i] = _troop.Cost.ResourceCost[i] * amount;
-        }
-
-        LibResources.spendResources(cityId, _costs);
-
-        _population += _troop.Population * amount;
-
-        if (_population > _cityPopulation) {
-            revert ErrorExceeds(_cityPopulation, _population);
-        }
-
-        LibCityManager.updateCityPopulation(cityId, _cityPopulation - _population);
-        s.CityTroops[cityId][troopId] += amount;
-        emit Recruitment(cityId, troopId, amount);
-    }
-
-    function recruitTroops(uint cityId, uint8[] calldata troopIds, uint[] calldata amounts) internal {
-        if (troopIds.length != amounts.length) {
-            revert ErrorAssertion(troopIds.length == amounts.length, false);
-        }
-        uint _population;
-        AppStorage storage s = LibAppStorage.diamondStorage();
-        uint MAX_RESOURCE_ID = s.MAX_RESOURCE_ID;
-        uint[] memory _costs = new uint[](MAX_RESOURCE_ID);
-        for (uint i = 0; i < amounts.length; ) {
-            uint amount = amounts[i];
-            uint troopId = troopIds[i];
-            if (amount == 0) {
-                revert ErrorNull(amount);
-            }
-            // check requirements, burn and set resource modifier
-            Troop memory _troop = LibTroops.troopInfo(troopId);
-            // int _modifier;
-            // check population
-
-            for (uint y = 0; y < MAX_RESOURCE_ID; y++) {
-                _costs[y] += _troop.Cost.ResourceCost[y] * amount;
-            }
-
-            _population += _troop.Population * amount;
-            s.CityTroops[cityId][troopId] += amount;
-            emit Recruitment(cityId, troopId, amount);
-            unchecked {
-                i++;
-            }
-        }
-
-        uint _cityPopulation = s.CityList[cityId].Population;
-        if (_cityPopulation < _population) {
-            revert ErrorExceeds(_cityPopulation, _population);
-        }
-        LibResources.spendResources(cityId, _costs);
-        LibCityManager.updateCityPopulation(cityId, _cityPopulation - _population);
-    }
-
-    function _releaseTroop(uint cityId, uint troopId, uint amount) internal returns (uint) {
-        if (amount == 0) {
-            revert ErrorNull(amount);
-        }
-        AppStorage storage s = LibAppStorage.diamondStorage();
-        if (s.CityTroops[cityId][troopId] < amount) {
-            revert ErrorExceeds(s.CityTroops[cityId][troopId], amount);
-        }
-        s.CityTroops[cityId][troopId] -= amount;
-        uint _population;
-        Troop memory _troop = LibTroops.troopInfo(troopId);
-        _population += _troop.Population * amount;
-        return _population;
-    }
-
-    function releaseTroops(uint cityId, uint[] calldata troopIds, uint[] calldata amounts) internal {
-        if (troopIds.length != amounts.length) {
-            revert ErrorAssertion(troopIds.length == amounts.length, false);
-        }
-        AppStorage storage s = LibAppStorage.diamondStorage();
-        uint population;
-
-        for (uint i = 0; i < troopIds.length; i++) {
-            population += _releaseTroop(cityId, troopIds[i], amounts[i]);
-        }
-
-        uint _cityPopulation = s.CityList[cityId].Population;
-
-        LibCityManager.updateCityPopulation(cityId, _cityPopulation + population);
     }
 
     function cityTroops(uint cityId, uint troopId) internal view returns (uint) {

@@ -4,7 +4,7 @@
   "description": "Template for contract projects.",
   "main": "index.js",
   "scripts": {
-    "test": "npx hardhat test",
+    "test": "cd test && npx hardhat test",
     "compile": "npx hardhat compile",
     "deploy": "npx hardhat run scripts/deploy.ts --network hardhat"
   },
