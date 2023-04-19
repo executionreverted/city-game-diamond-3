@@ -19,8 +19,6 @@ import {LibWorld} from "./LibWorld.sol";
 import {LibRNG} from "./LibRNG.sol";
 import "../shared/Errors.sol";
 
-// import "hardhat/console.sol";
-
 library LibTroopCommands {
     event PlotFight(uint indexed attackerSquadId, uint indexed victimSquadId, uint result, uint attackerCasualties, uint defenderCasualties);
     event CityFight(
@@ -33,6 +31,13 @@ library LibTroopCommands {
     );
     event Plunder(uint indexed attackerCity, uint indexed defenderCity, uint plunderPercentage);
 
+    struct PlunderArgs {
+        uint fromCity;
+        uint toCity;
+        uint percentage;
+        uint carryingCapacity;
+    }
+
     function handleFieldBattle(Squad memory attacker, Squad memory victim) internal {
         checkIfTargetInRange(attacker.Position, victim.Position);
         if (victim.ActiveAfter == 0 || block.timestamp < victim.ActiveAfter) {
@@ -42,25 +47,13 @@ library LibTroopCommands {
         (uint attackerArmyPower, uint defenderArmyPower) = fieldWarArmyPowerFormula(attacker, victim);
         // calculate attacker stats
 
-        // console.log("powers:");
-        // console.log(attackerArmyPower);
-        // console.log(defenderArmyPower);
         uint atkWinChance = LibCalculator.attackerVictoryChance(attackerArmyPower, defenderArmyPower);
-
-        // console.log("atkWinChance");
-        // console.log(atkWinChance);
 
         uint defWinChance = LibCalculator.defenderVictoryChance(attackerArmyPower, defenderArmyPower);
         // roll random
-        // console.log("defWinChance");
-        // console.log(defWinChance);
 
         uint atkRoll = LibRNG.d1000(block.timestamp + atkWinChance);
         uint defRoll = LibRNG.d1000(block.timestamp + defWinChance + 1);
-        // console.log("atkRoll");
-        // console.log(atkRoll);
-        // console.log("defRoll");
-        // console.log(defRoll);
 
         if (atkRoll < atkWinChance && defRoll < defWinChance) {
             _result = 2;
@@ -73,9 +66,6 @@ library LibTroopCommands {
         } else {
             _result = 2;
         }
-
-        // console.log("_result");
-        // console.log(_result);
 
         finalizeFieldWar(_result, attacker, victim, attackerArmyPower, defenderArmyPower);
     }
@@ -132,10 +122,6 @@ library LibTroopCommands {
     )  */
         uint atkCasualties = LibCalculator.attackerCasualties(atkArmyPower, defArmyPower, result == 0, result == 2);
         uint defCasualties = LibCalculator.defenderCasualties(atkArmyPower, defArmyPower, result == 0, result == 2);
-        // console.log("atkCasualties");
-        // console.log(atkCasualties);
-        // console.log("defCasualties");
-        // console.log(defCasualties);
         // kill atk troops
         bool attackerFullDead = true;
         bool defenderFullDead = true;
@@ -155,10 +141,6 @@ library LibTroopCommands {
             }
         }
 
-        // console.log("attackerFullDead");
-        // console.log(attackerFullDead);
-        // console.log("defenderFullDead");
-        // console.log(defenderFullDead);
         LibTroopsManager.editSquad(attacker, attackerFullDead);
         LibTroopsManager.editSquad(defender, defenderFullDead);
 
@@ -203,10 +185,6 @@ library LibTroopCommands {
         uint atkCasualties = LibCalculator.attackerCasualties(atkArmyPower, defArmyPower, result == 0, result == 2);
         uint defCasualties = LibCalculator.defenderCasualties(atkArmyPower, defArmyPower, result == 0, result == 2);
         uint plunder = LibCalculator.plunderAmountPercentage(atkArmyPower, defArmyPower);
-        // console.log("atkCasualties");
-        // console.log(atkCasualties);
-        // console.log("defCasualties");
-        // console.log(defCasualties);
         // kill atk troops
         bool attackerFullDead = true;
         for (uint i = 0; i < attacker.TroopIds.length; i++) {
@@ -224,16 +202,12 @@ library LibTroopCommands {
             else s.CityTroops[cityId][i] = 0;
         }
 
-        // console.log("attackerFullDead");
-        // console.log(attackerFullDead);
-        // console.log("defenderFullDead");
-        // console.log(defenderFullDead);
         LibTroopsManager.editSquad(attacker, attackerFullDead);
         if (result == 1) plunder /= 3;
 
         if (result == 0 || result == 1) {
-            plunderResources(cityId, attacker.ControlledBy, plunder);
-        }
+            plunderResources(attacker, cityId, attacker.ControlledBy, plunder);
+        } else revert("no win");
         emit CityFight(attacker.ID, attacker.ControlledBy, cityId, result, atkCasualties, defCasualties);
         /* if (result == 0) {
             // atk side win
@@ -244,17 +218,118 @@ library LibTroopCommands {
         } */
     }
 
-    function plunderResources(uint fromCity, uint toCity, uint percentage) internal {
+    function plunderResources(Squad memory attacker, uint fromCity, uint toCity, uint percentage) internal {
         AppStorage storage s = LibAppStorage.diamondStorage();
-        // console.log("plunder");
-        // console.log(percentage);
-        for (uint i = 0; i < s.MAX_RESOURCE_ID; i++) {
-            uint amountToDizz = (s.CityResources[fromCity][i] * percentage) / 1000;
-            // console.log(amountToDizz);
-            if (amountToDizz == 0) continue;
-            s.CityResources[fromCity][i] -= amountToDizz;
-            s.CityResources[toCity][i] += amountToDizz;
+        uint carryingCapacity;
+
+        for (uint i = 0; i < attacker.TroopIds.length; i++) {
+            if (attacker.TroopAmounts[i] > 0) {
+                carryingCapacity += LibTroops.troopInfo(attacker.TroopIds[i]).Capacity * attacker.TroopAmounts[i];
+            }
         }
+
+        carryingCapacity /= s.MAX_RESOURCE_ID;
+        if (carryingCapacity == 0) return;
+        handlePlunder(s, PlunderArgs({fromCity: fromCity, toCity: toCity, percentage: percentage, carryingCapacity: carryingCapacity}));
+
         emit Plunder(fromCity, toCity, percentage);
+    }
+
+    function handlePlunder(AppStorage storage s, PlunderArgs memory _args) internal {
+        uint cityMaxPlunderable;
+        uint totalPlundered;
+        uint bonus;
+        uint maxUsableBonus;
+        uint[] memory plunderedResources = new uint[](s.MAX_RESOURCE_ID);
+        bool[] memory cityHasNoResources = new bool[](s.MAX_RESOURCE_ID);
+        bool hasNoResource = true;
+        for (uint i = 0; i < s.MAX_RESOURCE_ID; i++) {
+            cityMaxPlunderable += (s.CityResources[_args.fromCity][i] * _args.percentage) / 1000;
+        }
+        for (uint i = 0; i < s.MAX_RESOURCE_ID; i++) {
+            if (totalPlundered >= cityMaxPlunderable) {
+                break;
+            }
+            uint resourceBalance = s.CityResources[_args.fromCity][i] - plunderedResources[i];
+            uint plunderableAmount = (resourceBalance * _args.percentage) / 1000;
+
+            if (plunderableAmount > _args.carryingCapacity) {
+                plunderableAmount = _args.carryingCapacity;
+                if (resourceBalance < plunderableAmount) {
+                    plunderableAmount = resourceBalance;
+                }
+            }
+
+            totalPlundered += plunderableAmount;
+            plunderedResources[i] += plunderableAmount;
+            setResources(_args.fromCity, _args.toCity, i, plunderableAmount);
+        }
+
+        do {
+            if (totalPlundered >= cityMaxPlunderable) {
+                break;
+            }
+            for (uint i = 0; i < cityHasNoResources.length; i++) {
+                if (!hasNoResource) break;
+                hasNoResource = cityHasNoResources[i];
+            }
+
+            if (hasNoResource) {
+                break;
+            }
+            for (uint i = 0; i < s.MAX_RESOURCE_ID; i++) {
+                if (totalPlundered >= cityMaxPlunderable) {
+                    break;
+                }
+                uint usedBonus;
+                uint resourceBalance = s.CityResources[_args.fromCity][i] - plunderedResources[i];
+                uint plunderableAmount = (resourceBalance * _args.percentage) / 1000;
+
+                if (
+                    i == 0 &&
+                    plunderableAmount + plunderedResources[i] < _args.carryingCapacity &&
+                    plunderableAmount + plunderedResources[i] <= resourceBalance
+                ) {
+                    plunderableAmount = resourceBalance;
+                }
+                if (plunderableAmount + plunderedResources[i] > _args.carryingCapacity) {
+                    plunderableAmount = _args.carryingCapacity;
+                }
+                if (plunderedResources[i] + plunderableAmount > _args.carryingCapacity) plunderableAmount = 0;
+
+                if (plunderableAmount != 0 && plunderedResources[i] + plunderableAmount < _args.carryingCapacity) {
+                    if (bonus > 0) {
+                        maxUsableBonus = _args.carryingCapacity - (plunderedResources[i] + plunderableAmount);
+                        if (maxUsableBonus > resourceBalance) {
+                            maxUsableBonus = resourceBalance - plunderableAmount;
+                        }
+                        usedBonus += maxUsableBonus;
+                        plunderableAmount += maxUsableBonus;
+                    }
+                }
+
+                totalPlundered += plunderableAmount;
+                bonus += _args.carryingCapacity - plunderedResources[i];
+                bonus -= usedBonus;
+                plunderedResources[i] += plunderableAmount;
+                setResources(_args.fromCity, _args.toCity, i, plunderableAmount);
+            }
+            hasNoResource = true;
+        } while (
+            !hasNoResource &&
+                totalPlundered < _args.carryingCapacity * s.MAX_RESOURCE_ID &&
+                (plunderedResources[0] < _args.carryingCapacity ||
+                    plunderedResources[1] < _args.carryingCapacity ||
+                    plunderedResources[2] < _args.carryingCapacity ||
+                    plunderedResources[3] < _args.carryingCapacity ||
+                    plunderedResources[4] < _args.carryingCapacity) &&
+                totalPlundered < cityMaxPlunderable
+        );
+    }
+
+    function setResources(uint fromCity, uint toCity, uint res, uint plunderableAmount) internal {
+        AppStorage storage s = LibAppStorage.diamondStorage();
+        s.CityResources[fromCity][res] -= plunderableAmount;
+        s.CityResources[toCity][res] += plunderableAmount;
     }
 }

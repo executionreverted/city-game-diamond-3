@@ -42,17 +42,17 @@ library LibTroops {
         _baseTroop.Def = 10;
         _baseTroop.SiegeDef = 10;
         _baseTroop.Hp = 10;
-        _baseTroop.Capacity = 10;
+        _baseTroop.Capacity = 99999;
         _baseTroop.Cost.FoodCostMultiplier = 1;
         _baseTroop.Cost.RequiredResearch = 1;
         _baseTroop.Cost.ResourceCost = generateCostArray();
-        _baseTroop.Cost.ResourceCost[0] = 100; // GOLD,
-        _baseTroop.Cost.ResourceCost[1] = 100; //  WOOD
-        _baseTroop.Cost.ResourceCost[2] = 100; // STONE
-        _baseTroop.Cost.ResourceCost[3] = 100; // IRON
-        _baseTroop.Cost.ResourceCost[4] = 100; // FOOD
+        _baseTroop.Cost.ResourceCost[0] = 1; // GOLD,
+        _baseTroop.Cost.ResourceCost[1] = 1; //  WOOD
+        _baseTroop.Cost.ResourceCost[2] = 1; // STONE
+        _baseTroop.Cost.ResourceCost[3] = 1; // IRON
+        _baseTroop.Cost.ResourceCost[4] = 1; // FOOD
         _baseTroop.Cost.MinBarracksLevel = 1;
-        _baseTroop.Population = 1;
+        _baseTroop.Population = 0;
 
         return _baseTroop;
     }

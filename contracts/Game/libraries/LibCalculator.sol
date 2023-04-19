@@ -9,7 +9,7 @@ import {LibTroops} from "../libraries/LibTroops.sol";
 library LibCalculator {
     uint constant Precision = 3;
     uint constant Absolute = 10 ** Precision;
-    uint constant MaxPlunderPercentage = 400; // 1000
+    uint constant MaxPlunderPercentage = 500; // 1000
 
     /*     
         Army power = (Number of soldiers * Attack power * Defense power * Health) * Morale bonus
@@ -52,7 +52,7 @@ library LibCalculator {
             return percent(atkArmyPower, defArmyPower, Precision) / 10;
         }
 
-        uint chance = attackerVictoryChance(atkArmyPower, defArmyPower) / 3;
+        uint chance = attackerVictoryChance(atkArmyPower, defArmyPower) / 2;
         return chance > MaxPlunderPercentage ? MaxPlunderPercentage : chance;
     }
 

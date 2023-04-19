@@ -64,12 +64,13 @@ describe("CityBattle", function () {
         // await resources.setGameManager(owner.address, true)
         for (let i = 0; i < 5; i++) {
             await resources.addResource(cityId, i, 50000)
-            await resources.addResource(cityId + 1, i, 50000)
+            await resources.addResource(cityId + 1, i, 1000)
         }
         for (let i = 0; i < 5; i++) {
             expect((await resources.cityResources(cityId, i)).eq(50000)).to.be.true
-            expect((await resources.cityResources(cityId + 1, i)).eq(50000)).to.be.true
+            expect((await resources.cityResources(cityId + 1, i)).eq(1000)).to.be.true
         }
+        await resources.addResource(cityId + 1, 4, 1000)
         console.log(await cities.ownerOf(0));
         console.log(await cities.ownerOf(1));
         console.log(await cities.ownerOf(2));
@@ -107,17 +108,17 @@ describe("CityBattle", function () {
 
     it("Mint 100 soldier", async function () {
         const [owner] = await ethers.getSigners();
-        await troopsManager.recruitTroops(cityId, [0], [40])
+        await troopsManager.recruitTroops(cityId, [0], [1000])
         await troopsManager2.recruitTroops(cityId + 1, [0], [5])
-        expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(40)
+        expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(1000)
         expect((await troopsManager.cityTroops(cityId + 1, 0)).toNumber()).to.eq(5)
     });
 
     it("Send squad to enemy city", async function () {
         const foodId = 4;
-        const troopToSend = 20
+        const troopToSend = 100
         await troopsManager.sendSquadTo(cityId, atkCityCoords, [0], [troopToSend], 2)
-        expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(40 - troopToSend, "soldier sent")
+        expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(1000 - troopToSend, "soldier sent")
         expect((await troopsManager.cityTroops(cityId + 1, 0)).toNumber()).to.eq(5, "soldier waits in city")
     });
 
@@ -134,9 +135,15 @@ describe("CityBattle", function () {
 
         console.log((await troopsManager.squadsById(0)).TroopAmounts[0], 'soldier in squad left');
         console.log((await troopsManager.cityTroops(cityId + 1, 0)).toNumber(), 'soldier in city left');
+        let pre = []
+        let pre2 = []
         for (let i = 0; i < 5; i++) {
-            console.log("atk ", (await resources.cityResources(cityId, i)), " ", i)
-            console.log("def ", (await resources.cityResources(cityId + 1, i)), " ", i)
+            let a = await resources.cityResources(cityId, i);
+            let b = await resources.cityResources(cityId + 1, i);
+            pre.push(a)
+            pre2.push(b)
+            console.log("atk ", (a), " ", i)
+            console.log("def ", (b), " ", i)
         }
         console.log('____________________');
 
@@ -144,10 +151,13 @@ describe("CityBattle", function () {
         console.log(
             'after'
         );
-
         for (let i = 0; i < 5; i++) {
             console.log("atk ", (await resources.cityResources(cityId, i)), " ", i)
             console.log("def ", (await resources.cityResources(cityId + 1, i)), " ", i)
+        }
+        for (let i = 0; i < 5; i++) {
+            console.log("diff ", ((await resources.cityResources(cityId, i)).sub(pre[i]).toNumber()), " ", i)
+            console.log("diff 2 ", ((await resources.cityResources(cityId + 1, i)).sub(pre2[i]).toNumber()), " ", i)
         }
 
         console.log((await troopsManager.squadsById(0)).TroopAmounts[0], 'soldier in squad left');
