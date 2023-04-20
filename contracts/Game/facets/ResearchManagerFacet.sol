@@ -75,9 +75,7 @@ contract ResearchManagerFacet is Modifiers {
             }
         }
 
-        for (uint j = 0; j < s.MAX_RESOURCE_ID; j++) {
-            _research.TimeRequired -= (_research.TimeRequired * reducedTime) / 100;
-        }
+        _research.TimeRequired -= (_research.TimeRequired * reducedTime) / 100;
 
         return _research;
     }

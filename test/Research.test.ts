@@ -18,7 +18,7 @@ const desiredCoords: any = { X: 1, Y: 1, }
 let owner: any;
 let cityId: any = 1;
 let researchCenterId: any = 9;
-describe("Test1",
+describe("Research Tree test",
     function () {
 
         let city1 = 2;
@@ -49,10 +49,10 @@ describe("Test1",
             await gameWorld.createCity(desiredCoords, true, 1)
             // await resources.setGameManager(owner.address, true)
             for (let i = 0; i < 5; i++) {
-                await resources.addResource(cityId, i, 1050000)
+                await resources.addResource(cityId, i, 999999999)
             }
             for (let i = 0; i < 5; i++) {
-                expect((await resources.cityResources(cityId, i)).eq(1050000)).to.be.true
+                expect((await resources.cityResources(cityId, i)).eq(999999999)).to.be.true
             }
         })
 
@@ -182,6 +182,7 @@ describe("Test1",
             expect(researched).to.be.true
         })
 
+
         it("should research Architecture", async () => {
             const Architecture = 24;
             await researchManager.beginResearch(cityId, Architecture, false)
@@ -218,4 +219,54 @@ describe("Test1",
             console.log(bal1.sub(bal2).toNumber());
         })
 
+        it("should research Ink", async () => {
+            const Ink = 25;
+            await researchManager.beginResearch(cityId, Ink, false)
+            let t = (await researchInfo.researchInfo(Ink)).TimeRequired.add(1).toNumber()
+            await time.increase(t);
+            const researched = await researchManager.isResearched(cityId, Ink)
+            expect(researched).to.be.true
+        })
+
+        it("should research Science Budget ", async () => {
+            const ScienceBudget = 4;
+            await researchManager.beginResearch(cityId, ScienceBudget, false)
+            let t = (await researchInfo.researchInfo(ScienceBudget)).TimeRequired.add(1).toNumber()
+            await time.increase(t);
+            const researched = await researchManager.isResearched(cityId, ScienceBudget)
+            expect(researched).to.be.true
+        })
+
+        it("should decrease research time and cost", async () => {
+            const nextResarch = 5;
+            const research = await researchInfo.researchInfo(5)
+            console.log("Base TimeRequired");
+            console.log(research.TimeRequired);
+            console.log("Base Wood cost");
+            console.log(research.Cost[1]);
+
+            const bal1 = await resources.cityResources(1, 1)
+            console.log("pre wood bal:");
+            console.log(bal1.toNumber())
+            console.log("diff");
+            
+            await researchManager.beginResearch(cityId, nextResarch, false)
+
+            const completionTime = await researchManager.researchTime(cityId, nextResarch)
+            const timeStamp = (await ethers.provider.getBlock("latest")).timestamp;
+            console.log('completed at: ');
+            console.log(completionTime.toNumber());
+            console.log('now: ');
+            console.log(timeStamp);
+            console.log('diff');
+            console.log(completionTime.sub(timeStamp).toNumber());
+            const bal2 = await resources.cityResources(1, 1)
+            console.log("post wood bal:");
+            console.log(bal2.toNumber())
+            console.log("diff");
+
+            console.log(bal1.sub(bal2).toNumber());
+
+
+        })
     });
