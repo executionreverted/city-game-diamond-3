@@ -3,9 +3,8 @@ import { expect } from "chai";
 import { time } from "@nomicfoundation/hardhat-network-helpers";
 
 import * as fs from 'fs'
-import { BuildingsFacet, CityManagerFacet, CityNFTFacet, WorldFacet, ResourcesFacet, TroopsManagerFacet, ResearchsFacet } from "../typechain-types";
+import { BuildingsFacet, CityManagerFacet, CityNFTFacet, WorldFacet, ResourcesFacet, TroopsManagerFacet, ResearchsFacet, ResearchManagerFacet } from "../typechain-types";
 import { deployDiamond } from "./deploy";
-import { ResearchManagerFacet } from "../typechain-types/contracts/Game/facets";
 let cities: CityNFTFacet;
 let gameWorld: WorldFacet;
 let cityManager: CityManagerFacet;
@@ -57,22 +56,32 @@ describe("Test1",
             }
         })
 
+        it("give premium", async () => {
+            await gameWorld.createCity(desiredCoords, true, 1)
+            await cityManager.setPremiumStatus(1, 1, 1)
+            const status = await cityManager.premiumStatus(1)
+            console.log('City has premium tier: ', status._tier.toNumber());
+
+            expect(status._tier.toNumber()).to.eq(1)
+            expect(status._expirationDate.toNumber()).to.gt(0)
+        })
+
         it("should upgrade research center 1", async () => {
-            await cityManager.upgradeBuilding(cityId, researchCenterId)
+            await cityManager.upgradeBuilding(cityId, researchCenterId, true)
             await time.increase(await (await buildings.buildingInfo(researchCenterId)).UpgradeTime[0].add(1).toNumber());
             const researchCenter = await cityManager.buildingLevel(cityId, researchCenterId)
             expect(researchCenter.eq(1)).to.be.true
         })
 
         it("should upgrade research center 2", async () => {
-            await cityManager.upgradeBuilding(cityId, researchCenterId)
+            await cityManager.upgradeBuilding(cityId, researchCenterId, true)
             await time.increase(await (await buildings.buildingInfo(researchCenterId)).UpgradeTime[1].add(1).toNumber());
             const researchCenter = await cityManager.buildingLevel(cityId, researchCenterId)
             expect(researchCenter.eq(2)).to.be.true
         })
         it("should research housing", async () => {
             const housing = 1;
-            await researchManager.beginResearch(cityId, housing)
+            await researchManager.beginResearch(cityId, housing, true)
             await time.increase(await (await researchInfo.researchInfo(housing)).TimeRequired.add(1).toNumber());
             const researched = await researchManager.isResearched(cityId, housing)
             expect(researched).to.be.true
@@ -80,7 +89,7 @@ describe("Test1",
 
         it("should research pulley", async () => {
             const pulley = 21;
-            await researchManager.beginResearch(cityId, pulley)
+            await researchManager.beginResearch(cityId, pulley, true)
             await time.increase(await (await researchInfo.researchInfo(pulley)).TimeRequired.add(1).toNumber());
             const researched = await researchManager.isResearched(cityId, pulley)
             expect(researched).to.be.true
@@ -91,7 +100,7 @@ describe("Test1",
             const bonus = await resources.resourceResearchBonus(cityId);
             console.log("bonus");
             console.log(bonus.toNumber());
-            expect(bonus).to.eq(0)
+            expect(bonus.toNumber()).to.eq(0)
             console.log(
                 (await resources.resourcesPerTick(cityId)).map(a => a.toNumber())
             );
@@ -100,7 +109,7 @@ describe("Test1",
 
         it("should research Advanced Tools I", async () => {
             const advLogi1 = 22;
-            await researchManager.beginResearch(cityId, advLogi1)
+            await researchManager.beginResearch(cityId, advLogi1, false)
             let t = (await researchInfo.researchInfo(advLogi1)).TimeRequired.add(1).toNumber()
             await time.increase(t);
             const researched = await researchManager.isResearched(cityId, advLogi1)
@@ -111,7 +120,7 @@ describe("Test1",
             const bonus = await resources.resourceResearchBonus(cityId);
             console.log("bonus");
             console.log(bonus.toNumber());
-            expect(bonus).to.eq(5)
+            expect(bonus.toNumber()).to.eq(5)
             console.log(
                 (await resources.resourcesPerTick(cityId)).map(a => a.toNumber())
             );

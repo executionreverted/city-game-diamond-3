@@ -64,6 +64,14 @@ describe("CityMintTest",
 
         });
 
+        it("give premium", async () => {
+            await cityManager.setPremiumStatus(1, 1, 1)
+            const status = await cityManager.premiumStatus(1)
+            console.log('City has premium tier: ', status._tier.toNumber());
+
+            expect(status._tier.toNumber()).to.eq(1)
+            expect(status._expirationDate.toNumber()).to.gt(0)
+        })
         it("Shouldn't allow re-create city in same coords", async function () {
 
             let hasError = false
@@ -258,10 +266,10 @@ describe("CityMintTest",
         it("Scan and get city infos.", async function () {
             let result = await gameWorld.scanCitiesBetweenCoords(0, 10, 0, 10);
             let cities = result[0];
-            cities.forEach((city, idx) => {
-                if (city.Alive) {
-                }
-            })
+            // cities.forEach((city, idx) => {
+            //     if (city.Alive) {
+            //     }
+            // })
             let cityIds = result[1].filter(a => a.gt(0));
             let cityIdxs = []
             cityIds.forEach(id => {

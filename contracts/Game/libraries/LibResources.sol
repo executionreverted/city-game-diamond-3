@@ -7,6 +7,7 @@ import {LibCityManager} from "./LibCityManager.sol";
 import {LibResearchManager} from "./LibResearchManager.sol";
 import {LibResearchs} from "./LibResearchs.sol";
 import {LibResourceCalculator} from "./LibResourceCalculator.sol";
+import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import {Resource} from "../shared/ResourceEnums.sol";
 import "../shared/Errors.sol";
 
@@ -40,10 +41,15 @@ library LibResources {
         return (result);
     }
 
-    function spendResources(uint cityId, uint[] memory amounts) internal {
+    function spendResources(uint cityId, uint[] memory amounts, bool claimUnClaimable) internal {
         uint[] memory limits = getCityStorage(cityId);
         AppStorage storage s = LibAppStorage.diamondStorage();
-        LibResourceCalculator.claimAllResources(s, cityId, limits);
+        bool isPremium = s.CITY_PREMIUM_STATUS[cityId] > 0;
+        uint expirationDate = s.CITY_PREMIUM_EXPIRE_DATE[cityId];
+        if ((!isPremium || block.timestamp > expirationDate) && claimUnClaimable) revert ErrorNoPremium(LibMeta.msgSender());
+        if (isPremium && claimUnClaimable && block.timestamp < expirationDate) {
+            LibResourceCalculator.claimAllResources(s, cityId, limits);
+        }
         for (uint i = 0; i < s.MAX_RESOURCE_ID; ) {
             if (amounts[i] == 0) continue;
             if (amounts[i] > s.CityResources[cityId][uint(i)]) revert ErrorExceeds(amounts[i], s.CityResources[cityId][uint(i)]);

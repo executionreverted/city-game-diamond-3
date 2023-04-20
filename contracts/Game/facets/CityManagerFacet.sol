@@ -20,6 +20,15 @@ contract CityManagerFacet is Modifiers {
     event BuildingUpgraded(uint indexed cityId, uint indexed buildingId, uint newTier, uint when);
     event CityPopulationUpdate(uint indexed cityId, uint population);
 
+    function setPremiumStatus(uint cityId, uint premiumTier, uint _days) external onlyManager {
+        LibCityManager.setPremiumStatus(cityId, premiumTier, _days);
+    }
+
+    function premiumStatus(uint cityId) external view returns (uint _tier, uint _expirationDate) {
+        _tier = s.CITY_PREMIUM_STATUS[cityId];
+        _expirationDate = s.CITY_PREMIUM_EXPIRE_DATE[cityId];
+    }
+
     function racePopulation(uint _race) external view returns (uint) {
         return s.RacePopulation[_race];
     }
@@ -60,7 +69,7 @@ contract CityManagerFacet is Modifiers {
         return result;
     }
 
-    function upgradeBuilding(uint cityId, uint buildingId) external onlyCityOwner(cityId) {
+    function upgradeBuilding(uint cityId, uint buildingId, bool autoClaim) external onlyCityOwner(cityId) {
         uint MAX_RESOURCE_ID = s.MAX_RESOURCE_ID;
         uint BuildingLevelActivationTime = s.BuildingLevelActivationTime[cityId][buildingId];
         if (block.timestamp < BuildingLevelActivationTime) {
@@ -79,7 +88,7 @@ contract CityManagerFacet is Modifiers {
             _costs[i] = _building.Cost[currentTier + 1][i];
         }
 
-        LibResources.spendResources(cityId, _costs);
+        LibResources.spendResources(cityId, _costs, autoClaim);
         s.BuildingLevels[cityId][buildingId].Tier++;
         uint Deadline = block.timestamp + _building.UpgradeTime[currentTier];
 
@@ -130,5 +139,3 @@ contract CityManagerFacet is Modifiers {
         return _recruitable;
     }
 }
-
-

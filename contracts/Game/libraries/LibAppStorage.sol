@@ -87,6 +87,10 @@ struct AppStorage {
 
     uint RESEARCH_CENTER_ID;
     mapping(uint => uint[100]) CityResearchesValidAfter;
+    // premium features
+
+    mapping(uint => uint) CITY_PREMIUM_STATUS;
+    mapping(uint => uint) CITY_PREMIUM_EXPIRE_DATE;
 }
 
 library LibAppStorage {
@@ -100,7 +104,6 @@ library LibAppStorage {
         return uint256(x >= 0 ? x : -x);
     }
 }
-
 
 contract Modifiers {
     AppStorage internal s;
@@ -123,6 +126,4 @@ contract Modifiers {
         require(s.CityList[cityId].Operator == sender, "Only city operator can call this function");
         _;
     }
-
-    
 }

@@ -13,7 +13,7 @@ import "../shared/Errors.sol";
 contract ResearchManagerFacet is Modifiers {
     event BeginResearch(uint indexed cityId, uint indexed researchId, uint completionTime);
 
-    function beginResearch(uint cityId, uint researchId) external onlyCityOwner(cityId) {
+    function beginResearch(uint cityId, uint researchId, bool useAutoClaim) external onlyCityOwner(cityId) {
         // must be not researched
         if (s.CityResearchesValidAfter[cityId][researchId] != 0) revert ErrorAlreadyGoingOn(researchId);
 
@@ -37,7 +37,7 @@ contract ResearchManagerFacet is Modifiers {
         for (uint i = 0; i < MAX_RESOURCE_ID; i++) {
             toBeBurn[i] = _research.Cost[i];
         }
-        LibResources.spendResources(cityId, toBeBurn);
+        LibResources.spendResources(cityId, toBeBurn, useAutoClaim);
         // set completion time
         s.CityResearchesValidAfter[cityId][researchId] = block.timestamp + _research.TimeRequired;
         emit BeginResearch(cityId, researchId, block.timestamp + _research.TimeRequired);

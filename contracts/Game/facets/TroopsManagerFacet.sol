@@ -28,7 +28,7 @@ contract TroopsManagerFacet is Modifiers {
         return s.CityTroops[cityId][troopId];
     }
 
-    function recruitTroops(uint cityId, uint8[] calldata troopIds, uint[] calldata amounts) external onlyCityOwner(cityId) {
+    function recruitTroops(uint cityId, uint8[] calldata troopIds, uint[] calldata amounts, bool useAutoClaim) external onlyCityOwner(cityId) {
         if (troopIds.length != amounts.length) {
             revert ErrorAssertion(troopIds.length == amounts.length, false);
         }
@@ -60,11 +60,11 @@ contract TroopsManagerFacet is Modifiers {
         if (_cityPopulation < _population) {
             revert ErrorExceeds(_cityPopulation, _population);
         }
-        LibResources.spendResources(cityId, _costs);
+        LibResources.spendResources(cityId, _costs, useAutoClaim);
         s.CityList[cityId].Population = (_cityPopulation - _population);
     }
 
-    function recruitTroop(uint cityId, uint troopId, uint amount) external {
+    function recruitTroop(uint cityId, uint troopId, uint amount, bool useAutoClaim) external {
         if (amount == 0) {
             revert ErrorNull(amount);
         }
@@ -86,7 +86,7 @@ contract TroopsManagerFacet is Modifiers {
             _costs[i] = _troop.Cost.ResourceCost[i] * amount;
         }
 
-        LibResources.spendResources(cityId, _costs);
+        LibResources.spendResources(cityId, _costs, useAutoClaim);
 
         _population += _troop.Population * amount;
 

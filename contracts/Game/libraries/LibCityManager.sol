@@ -14,6 +14,12 @@ library LibCityManager {
     event CityRaceUpdate(uint indexed cityId, Race race);
     event CityAliveUpdate(uint indexed cityId, bool value);
 
+    function setPremiumStatus(uint cityId, uint premiumTier, uint _days) internal {
+        AppStorage storage s = LibAppStorage.diamondStorage();
+        s.CITY_PREMIUM_STATUS[cityId] = premiumTier;
+        s.CITY_PREMIUM_EXPIRE_DATE[cityId] = block.timestamp + (_days * 1 days);
+    }
+
     function setCity(uint cityId, City memory _city) internal {
         AppStorage storage s = LibAppStorage.diamondStorage();
         s.CityList[cityId] = _city;

@@ -83,6 +83,16 @@ describe("CityBattle", function () {
         console.log(await cities.ownerOf(4));
     });
 
+    it("give premium", async () => {
+        await gameWorld.createCity(desiredCoords, true, 1)
+        await cityManager.setPremiumStatus(1, 1, 1)
+        await cityManager.setPremiumStatus(2, 1, 1)
+        const status = await cityManager.premiumStatus(1)
+        console.log('City has premium tier: ', status._tier.toNumber());
+
+        expect(status._tier.toNumber()).to.eq(1)
+        expect(status._expirationDate.toNumber()).to.gt(0)
+    })
     it("Upgrade barracks", async function () {
         console.log('1');
         console.log("City  Blaances before upgrade: ");
@@ -91,7 +101,7 @@ describe("CityBattle", function () {
                 await resources.cityResources(cityId, index)
             );
         }
-        await cityManager.upgradeBuilding(cityId, barracksId)
+        await cityManager.upgradeBuilding(cityId, barracksId, true)
         console.log('2');
         console.log("City Blaances after upgrade: ");
         for (let index = 0; index < 5; index++) {
@@ -101,7 +111,7 @@ describe("CityBattle", function () {
         }
         let hasError
         try {
-            await cityManager.upgradeBuilding(cityId, barracksId)
+            await cityManager.upgradeBuilding(cityId, barracksId, true)
         } catch (error) {
             hasError = true
         }
@@ -113,8 +123,8 @@ describe("CityBattle", function () {
 
     it("Mint 100 soldier", async function () {
         const [owner] = await ethers.getSigners();
-        await troopsManager.recruitTroops(cityId, [0], [1000])
-        await troopsManager2.recruitTroops(cityId + 1, [0], [5])
+        await troopsManager.recruitTroops(cityId, [0], [1000], true)
+        await troopsManager2.recruitTroops(cityId + 1, [0], [5], true)
         expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(1000)
         expect((await troopsManager.cityTroops(cityId + 1, 0)).toNumber()).to.eq(5)
     });

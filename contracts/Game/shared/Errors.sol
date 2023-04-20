@@ -10,5 +10,6 @@ error ErrorAssertion(bool a, bool b);
 error ErrorAlreadyGoingOn(uint param);
 error ErrorRequirementsNotSatisfied(uint param);
 error ErrorAttackerIsOwner(address sender);
+error ErrorNoPremium(address sender);
 error ErrorNull(uint a);
 error ErrorInvalidCall();
