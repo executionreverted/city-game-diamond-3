@@ -2,6 +2,7 @@
 pragma solidity ^0.8.18;
 
 import {Research} from "../shared/ResearchStructs.sol";
+import {ResearchBonusType} from "../shared/ResearchEnums.sol";
 import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import {City, Race} from "../shared/CityStructs.sol";
 import {Coords} from "../shared/WorldStructs.sol";
@@ -19,30 +20,92 @@ import "../shared/Errors.sol";
 library LibResearchManager {
     using EnumerableSet for EnumerableSet.UintSet;
 
-    event BeginResearch(uint indexed cityId, uint indexed researchId, uint completionTime);
+    function researchIdsByBonusType(ResearchBonusType _type) internal pure returns (uint[] memory) {
+        if (_type == ResearchBonusType.GOLD_BONUS) {
+            uint[] memory researchIds = new uint[](4);
+            researchIds[0] = 3;
+            researchIds[1] = 6;
+            researchIds[2] = 8;
+            researchIds[3] = 10;
+            return researchIds;
+        }
 
-    // movement stuff
+        if (
+            _type == ResearchBonusType.WOOD_BONUS ||
+            _type == ResearchBonusType.IRON_BONUS ||
+            _type == ResearchBonusType.STONE_BONUS ||
+            _type == ResearchBonusType.FOOD_BONUS
+        ) {
+            uint[] memory researchIds = new uint[](5);
+            researchIds[0] = 6;
+            researchIds[1] = 22;
+            researchIds[2] = 26;
+            researchIds[3] = 28;
+            researchIds[4] = 30;
+            return researchIds;
+        }
 
-    function beginResearch(uint cityId, uint researchId) internal {
-        // must be not researched
+        if (_type == ResearchBonusType.BOOST_ARMY_POWER) {
+            uint[] memory researchIds = new uint[](1);
+            researchIds[0] = 45;
+            return researchIds;
+        }
+
+        if (_type == ResearchBonusType.REDUCE_RESEARCH_COST) {
+            uint[] memory researchIds = new uint[](1);
+            researchIds[0] = 4;
+            return researchIds;
+        }
+
+        if (_type == ResearchBonusType.REDUCE_RESEARCH_TIME) {
+            uint[] memory researchIds = new uint[](1);
+            researchIds[0] = 25;
+            return researchIds;
+        }
+
+        if (_type == ResearchBonusType.REDUCE_BUILDING_COST) {
+            uint[] memory researchIds = new uint[](1);
+            researchIds[0] = 24;
+            return researchIds;
+        }
+
+        if (_type == ResearchBonusType.REDUCE_BUILDING_TIME) {
+            uint[] memory researchIds = new uint[](1);
+            researchIds[0] = 21;
+            return researchIds;
+        }
+
+        if (_type == ResearchBonusType.REDUCE_TRADING_FEE) {
+            uint[] memory researchIds = new uint[](1);
+            researchIds[0] = 9;
+            return researchIds;
+        }
+
+        if (_type == ResearchBonusType.REDUCE_TROOPS_COST) {
+            uint[] memory researchIds = new uint[](1);
+            researchIds[0] = 42;
+            return researchIds;
+        }
+
+        if (_type == ResearchBonusType.REDUCE_TROOP_RECRUIT_TIME) {
+            uint[] memory researchIds = new uint[](1);
+            researchIds[0] = 47;
+            return researchIds;
+        }
+
+        if (_type == ResearchBonusType.REDUCE_TROOP_TRAVEL_COST) {
+            uint[] memory researchIds = new uint[](1);
+            researchIds[0] = 48;
+            return researchIds;
+        }
+
+        return new uint[](1);
+    }
+
+    function isResearched(uint cityId, uint researchId) internal view returns (bool) {
         AppStorage storage s = LibAppStorage.diamondStorage();
-        if (s.CityResearchesValidAfter[cityId][researchId] != 0) revert ErrorAlreadyGoingOn(researchId);
-
-        // burn resources
-        Research memory _research = LibResearchs.researchInfo(researchId);
-        uint researchCenterTier = s.BuildingLevels[cityId][s.RESEARCH_CENTER_ID].Tier;
-        if (researchCenterTier < _research.MinResearchCenterLevel) {
-            revert ErrorAssertion(researchCenterTier < _research.MinResearchCenterLevel, false);
-        }
-        uint MAX_RESOURCE_ID = s.MAX_RESOURCE_ID;
-        uint[] memory toBeBurn = new uint[](s.MAX_RESOURCE_ID);
-        for (uint i = 0; i < MAX_RESOURCE_ID; i++) {
-            toBeBurn[i] = _research.Cost[i];
-        }
-        LibResources.spendResources(cityId, toBeBurn);
-        // set completion time
-        s.CityResearchesValidAfter[cityId][researchId] = block.timestamp + _research.TimeRequired;
-
-        emit BeginResearch(cityId, researchId, block.timestamp + _research.TimeRequired);
+        uint validAfter = s.CityResearchesValidAfter[cityId][researchId];
+        if (validAfter != 0 && block.timestamp >= validAfter) return true;
+        return false;
     }
 }

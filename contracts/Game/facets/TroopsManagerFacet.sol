@@ -61,7 +61,7 @@ contract TroopsManagerFacet is Modifiers {
             revert ErrorExceeds(_cityPopulation, _population);
         }
         LibResources.spendResources(cityId, _costs);
-        LibCityManager.updateCityPopulation(cityId, _cityPopulation - _population);
+        s.CityList[cityId].Population = (_cityPopulation - _population);
     }
 
     function recruitTroop(uint cityId, uint troopId, uint amount) external {
@@ -94,7 +94,7 @@ contract TroopsManagerFacet is Modifiers {
             revert ErrorExceeds(_cityPopulation, _population);
         }
 
-        LibCityManager.updateCityPopulation(cityId, _cityPopulation - _population);
+        s.CityList[cityId].Population = _cityPopulation - _population;
         s.CityTroops[cityId][troopId] += amount;
         emit Recruitment(cityId, troopId, amount);
     }
@@ -125,29 +125,7 @@ contract TroopsManagerFacet is Modifiers {
 
         uint _cityPopulation = s.CityList[cityId].Population;
 
-        LibCityManager.updateCityPopulation(cityId, _cityPopulation + population);
-    }
-
-    function sendSquadTo(
-        uint cityId,
-        Coords memory coords,
-        uint8[] memory troopIds,
-        uint[] memory troopAmounts,
-        Purpose purpose
-    ) external onlyCityOwner(cityId) {
-        LibTroopsManager.sendSquadTo(cityId, coords, troopIds, troopAmounts, purpose);
-    }
-
-    function callSquadBack(uint cityId, uint squadId) external onlyCityOwner(cityId) {
-        LibTroopsManager.callSquadBack(cityId, squadId);
-    }
-
-    function repositionSquad(uint cityId, uint squadId, Coords memory newCoords) external onlyCityOwner(cityId) {
-        LibTroopsManager.repositionSquad(cityId, squadId, newCoords);
-    }
-
-    function changePurpose(uint cityId, uint squadId, Purpose newPurpose) external onlyCityOwner(cityId) {
-        LibTroopsManager.changePurpose(cityId, squadId, newPurpose);
+        s.CityList[cityId].Population = (_cityPopulation + population);
     }
 
     function squadsById(uint squadId) external view returns (Squad memory) {

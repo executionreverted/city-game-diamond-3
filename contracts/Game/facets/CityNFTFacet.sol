@@ -9,8 +9,6 @@ import {Modifiers} from "../libraries/LibAppStorage.sol";
 import {Coords} from "../shared/WorldStructs.sol";
 import {City, Building} from "../shared/CityStructs.sol";
 import {Race} from "../shared/CityEnums.sol";
-import {ICities} from "../interfaces/ICities.sol";
-import {ICityManager} from "../interfaces/ICityManager.sol";
 
 // Access Control
 import "../../shared/interfaces/IERC173.sol";

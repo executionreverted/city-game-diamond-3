@@ -17,4 +17,8 @@ contract ResearchsFacet is Modifiers {
 
         return _result;
     }
+
+    function researchInfo(uint researchId) external pure returns (Research memory) {
+        return LibResearchs.researchInfo(researchId);
+    }
 }

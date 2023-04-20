@@ -2,6 +2,7 @@
 
 pragma solidity ^0.8.18;
 
+
 struct Research {
     uint ID;
     uint TimeRequired;
@@ -11,3 +12,4 @@ struct Research {
     uint[100] Cost;
     bool IsUnlocked;
 }
+

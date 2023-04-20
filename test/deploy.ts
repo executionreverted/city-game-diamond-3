@@ -35,6 +35,7 @@ export async function deployDiamond() {
         'ResourcesFacet',
         'TroopCommandsFacet',
         'TroopsManagerFacet',
+        'TroopMovementsFacet',
         'WorldFacet',
         'ResearchsFacet',
         'ResearchManagerFacet',

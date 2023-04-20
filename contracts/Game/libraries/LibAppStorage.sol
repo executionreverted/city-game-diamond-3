@@ -6,14 +6,6 @@ import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import {World, Coords, Plot} from "../shared/WorldStructs.sol";
 import {City, Building} from "../shared/CityStructs.sol";
 import {Squad} from "../shared/TroopsStructs.sol";
-import {ICities} from "../interfaces/ICities.sol";
-import {ICityManager} from "../interfaces/ICityManager.sol";
-import {IPerlinNoise} from "../interfaces/IPerlinNoise.sol";
-import {IGameWorld} from "../interfaces/IGameWorld.sol";
-import {IResources} from "../interfaces/IResources.sol";
-import {IBuildings} from "../interfaces/IBuildings.sol";
-import {ITroopsManager} from "../interfaces/ITroopsManager.sol";
-import {ICalculator} from "../interfaces/ICalculator.sol";
 
 uint constant MAX_RACE_ID = 5;
 uint constant MAX_TROOP_ID = 100;
@@ -83,7 +75,6 @@ struct AppStorage {
     mapping(uint => uint[10]) LastClaims;
     mapping(uint => uint[10]) CityResources;
     // modifiers from actions in game to decrease/increase productions
-    mapping(uint => int[10]) CityResourceModifiers;
     uint PROD_CYCLE; // todo fix in prod
     uint WAREHOUSE_ID;
     uint WAREHOUSE_STORAGE_PER_TIER;

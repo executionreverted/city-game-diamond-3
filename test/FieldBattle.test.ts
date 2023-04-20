@@ -4,11 +4,13 @@ import { time } from "@nomicfoundation/hardhat-network-helpers";
 import "hardhat-gas-reporter"
 import { BuildingsFacet, CalculatorFacet, CityManagerFacet, CityNFTFacet, ResourcesFacet, TroopCommandsFacet, TroopsManagerFacet, WorldFacet } from "../typechain-types";
 import { deployDiamond } from "./deploy";
+import { TroopMovementsFacet } from "../typechain-types/contracts/Game/facets/TroopMovementsFacet.sol";
 let cities: CityNFTFacet;
 let gameWorld: WorldFacet;
 let cityManager: CityManagerFacet;
 let troops: TroopsManagerFacet;
 let troopsManager: TroopsManagerFacet;
+let troopsMovement: TroopMovementsFacet;
 let troopCommands: TroopCommandsFacet;
 let buildings: BuildingsFacet;
 let resources: ResourcesFacet;
@@ -35,6 +37,7 @@ describe("FieldBattle", function () {
         cityManager = await ethers.getContractAt("CityManagerFacet", diamond) as any
         troops = await ethers.getContractAt("TroopsManagerFacet", diamond) as any
         troopsManager = await ethers.getContractAt("TroopsManagerFacet", diamond) as any
+        troopsMovement = await ethers.getContractAt("TroopMovementsFacet", diamond) as any
         buildings = await ethers.getContractAt("BuildingsFacet", diamond) as any
         resources = await ethers.getContractAt("ResourcesFacet", diamond) as any
         calculator = await ethers.getContractAt("CalculatorFacet", diamond) as any
@@ -159,7 +162,7 @@ describe("FieldBattle", function () {
         const foodId = 4;
         let resourceBalance = await resources.cityResources(cityId, foodId)
         const troopToSend = 20
-        await troopsManager.sendSquadTo(cityId, coordsToSend, [0], [troopToSend], 2)
+        await troopsMovement.sendSquadTo(cityId, coordsToSend, [0], [troopToSend], 2)
 
         let resourceAfter = await resources.cityResources(cityId, foodId)
 
@@ -189,7 +192,7 @@ describe("FieldBattle", function () {
         const coordsToSend = { X: 1, Y: 3 }
         const foodId = 4;
         let resourceBalance = await resources.cityResources(cityId, foodId)
-        await troopsManager.sendSquadTo(cityId, coordsToSend, [0], [20], 0)
+        await troopsMovement.sendSquadTo(cityId, coordsToSend, [0], [20], 0)
         let resourceAfter = await resources.cityResources(cityId, foodId)
         let squad = await troopsManager.squadsById(1)
         const activeSquadsOfCity = await troopsManager.cityActiveSquads(cityId)

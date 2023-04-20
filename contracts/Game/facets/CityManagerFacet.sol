@@ -4,11 +4,13 @@ pragma solidity ^0.8.18;
 import {LibCityManager} from "../libraries/LibCityManager.sol";
 import {LibBuildings} from "../libraries/LibBuildings.sol";
 import {LibResources} from "../libraries/LibResources.sol";
+import {LibResourceCalculator} from "../libraries/LibResourceCalculator.sol";
 import {Modifiers} from "../libraries/LibAppStorage.sol";
 import {Coords} from "../shared/WorldStructs.sol";
 import {City, Building} from "../shared/CityStructs.sol";
 import {Race} from "../shared/CityEnums.sol";
 import "../shared/Errors.sol";
+//  LibResourceCalculator.claimAllResources(s, cityId, limits);
 
 // Access Control
 import "../../shared/interfaces/IERC173.sol";
@@ -75,6 +77,7 @@ contract CityManagerFacet is Modifiers {
         for (uint i = 0; i < MAX_RESOURCE_ID; i++) {
             _costs[i] = _building.Cost[currentTier + 1][i];
         }
+
         LibResources.spendResources(cityId, _costs);
         s.BuildingLevels[cityId][buildingId].Tier++;
         uint Deadline = block.timestamp + _building.UpgradeTime[currentTier];

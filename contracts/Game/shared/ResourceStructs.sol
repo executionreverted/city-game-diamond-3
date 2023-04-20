@@ -10,3 +10,10 @@ struct ClaimableResource {
     uint256 Deadline;
     Resource Resource;
 }
+
+struct ProductionArgs {
+    uint cityId;
+    uint buildingLvl;
+    uint boostAmount;
+    Resource resource;
+}

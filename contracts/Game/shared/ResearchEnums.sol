@@ -2,3 +2,20 @@
 
 pragma solidity ^0.8.18;
 
+enum ResearchBonusType {
+    GOLD_BONUS, //
+    WOOD_BONUS, //
+    STONE_BONUS, //
+    IRON_BONUS, //
+    FOOD_BONUS, //
+    ALL_RESOURCE_BONUS, //
+    REDUCE_RESEARCH_COST, //
+    REDUCE_TROOPS_COST, //
+    REDUCE_TROOP_TRAVEL_COST, 
+    REDUCE_TROOP_RECRUIT_TIME, 
+    REDUCE_BUILDING_COST, //
+    REDUCE_TRADING_FEE, //
+    REDUCE_BUILDING_TIME, //
+    REDUCE_RESEARCH_TIME, //
+    BOOST_ARMY_POWER //
+}

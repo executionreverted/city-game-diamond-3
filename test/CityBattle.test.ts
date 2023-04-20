@@ -4,6 +4,7 @@ import { time } from "@nomicfoundation/hardhat-network-helpers";
 import "hardhat-gas-reporter"
 import { BuildingsFacet, CalculatorFacet, CityManagerFacet, CityNFTFacet, ResourcesFacet, TroopCommandsFacet, TroopsManagerFacet, WorldFacet } from "../typechain-types";
 import { deployDiamond } from "./deploy";
+import { TroopMovementsFacet } from "../typechain-types/contracts/Game/facets/TroopMovementsFacet.sol";
 let cities: CityNFTFacet;
 let gameWorld: WorldFacet;
 let gameWorld2: WorldFacet;
@@ -12,6 +13,8 @@ let troops: TroopsManagerFacet;
 let troopsManager: TroopsManagerFacet;
 let troopsManager2: TroopsManagerFacet;
 let troopCommands: TroopCommandsFacet;
+let troopsMovement: TroopMovementsFacet;
+let troopsMovement2: TroopMovementsFacet;
 let buildings: BuildingsFacet;
 let resources: ResourcesFacet;
 let calculator: CalculatorFacet;
@@ -44,7 +47,9 @@ describe("CityBattle", function () {
         cityManager = await ethers.getContractAt("CityManagerFacet", diamond) as any
         troops = await ethers.getContractAt("TroopsManagerFacet", diamond) as any
         troopsManager = await ethers.getContractAt("TroopsManagerFacet", diamond) as any
+        troopsMovement = await ethers.getContractAt("TroopMovementsFacet", diamond) as any
         troopsManager2 = await ethers.getContractAt("TroopsManagerFacet", diamond, owner2) as any
+        troopsMovement2 = await ethers.getContractAt("TroopMovementsFacet", diamond, owner2) as any
         buildings = await ethers.getContractAt("BuildingsFacet", diamond) as any
         resources = await ethers.getContractAt("ResourcesFacet", diamond) as any
         calculator = await ethers.getContractAt("CalculatorFacet", diamond) as any
@@ -117,7 +122,7 @@ describe("CityBattle", function () {
     it("Send squad to enemy city", async function () {
         const foodId = 4;
         const troopToSend = 100
-        await troopsManager.sendSquadTo(cityId, atkCityCoords, [0], [troopToSend], 2)
+        await troopsMovement.sendSquadTo(cityId, atkCityCoords, [0], [troopToSend], 2)
         expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(1000 - troopToSend, "soldier sent")
         expect((await troopsManager.cityTroops(cityId + 1, 0)).toNumber()).to.eq(5, "soldier waits in city")
     });

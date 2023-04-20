@@ -14,51 +14,6 @@ library LibCityManager {
     event CityRaceUpdate(uint indexed cityId, Race race);
     event CityAliveUpdate(uint indexed cityId, bool value);
 
-   
-    function race(uint cityId) internal view returns (Race) {
-        AppStorage storage s = LibAppStorage.diamondStorage();
-        return s.CityList[cityId].Race;
-    }
-
-    function city(uint cityId) internal view returns (City memory) {
-        AppStorage storage s = LibAppStorage.diamondStorage();
-        return s.CityList[cityId];
-    }
-
-    // function mintTime(uint cityId) public view returns (uint) {
-    //     AppStorage storage s = LibAppStorage.diamondStorage();
-    //     return s.CityList[cityId].CreationDate;
-    // }
-
-    function updateCityCoords(uint cityId, Coords memory _param) internal returns (bool) {
-        AppStorage storage s = LibAppStorage.diamondStorage();
-        s.CityList[cityId].Coords = _param;
-        emit CityCoordsUpdate(cityId, _param);
-        return true;
-    }
-
-    function updateCityRace(uint cityId, Race _param) internal returns (bool) {
-        AppStorage storage s = LibAppStorage.diamondStorage();
-        s.RacePopulation[uint(s.CityList[cityId].Race)]--;
-        s.CityList[cityId].Race = _param;
-        s.RacePopulation[uint(_param)]++;
-        emit CityRaceUpdate(cityId, _param);
-        return true;
-    }
-
-    function updateCityAlive(uint cityId, bool _param) internal returns (bool) {
-        AppStorage storage s = LibAppStorage.diamondStorage();
-        s.CityList[cityId].Alive = _param;
-        emit CityAliveUpdate(cityId, _param);
-        return true;
-    }
-
-    function updateCityPopulation(uint cityId, uint _param) internal returns (bool) {
-        AppStorage storage s = LibAppStorage.diamondStorage();
-        s.CityList[cityId].Population = _param;
-        return true;
-    }
-
     function setCity(uint cityId, City memory _city) internal {
         AppStorage storage s = LibAppStorage.diamondStorage();
         s.CityList[cityId] = _city;
