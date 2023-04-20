@@ -13,7 +13,6 @@ import {Research} from "../shared/ResearchStructs.sol";
 import {ResearchBonusType} from "../shared/ResearchEnums.sol";
 import {IFetchGlobal} from "../interfaces/IFetchGlobal.sol";
 import "../shared/Errors.sol";
-import "hardhat/console.sol";
 
 library LibResources {
     event SpendResource(uint indexed cityId, Resource indexed resource, uint amount);
@@ -60,9 +59,7 @@ library LibResources {
             LibResourceCalculator.claimAllResources(s, cityId, limits, boostAmt);
         }
 
-        console.log("work");
         for (uint i = 0; i < s.MAX_RESOURCE_ID; ) {
-            console.log(amounts[i]);
             if (amounts[i] == 0) {
                 unchecked {
                     i++;

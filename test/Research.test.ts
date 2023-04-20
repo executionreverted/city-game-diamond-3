@@ -79,10 +79,25 @@ describe("Test1",
             const researchCenter = await cityManager.buildingLevel(cityId, researchCenterId)
             expect(researchCenter.eq(2)).to.be.true
         })
+
+        it("should upgrade research center 3", async () => {
+            await cityManager.upgradeBuilding(cityId, researchCenterId, true)
+            await time.increase(await (await buildings.buildingInfo(researchCenterId)).UpgradeTime[2].add(1).toNumber());
+            const researchCenter = await cityManager.buildingLevel(cityId, researchCenterId)
+            expect(researchCenter.eq(3)).to.be.true
+        })
+
+        it("should upgrade research center 4", async () => {
+            await cityManager.upgradeBuilding(cityId, researchCenterId, true)
+            await time.increase(await (await buildings.buildingInfo(researchCenterId)).UpgradeTime[3].add(1).toNumber());
+            const researchCenter = await cityManager.buildingLevel(cityId, researchCenterId)
+            expect(researchCenter.eq(4)).to.be.true
+        })
+
         it("should research housing", async () => {
             const housing = 1;
             await researchManager.beginResearch(cityId, housing, true)
-            await time.increase(await (await researchInfo.researchInfo(housing)).TimeRequired.add(1).toNumber());
+            await time.increase(await (await researchInfo.researchInfo(housing)).TimeRequired.add(4).toNumber());
             const researched = await researchManager.isResearched(cityId, housing)
             expect(researched).to.be.true
         })
@@ -154,6 +169,51 @@ describe("Test1",
             console.log(
                 (await resources.claimableGold(cityId, true)).toNumber()
             );
+        })
+
+
+
+        it("should research Beyond Our Realm", async () => {
+            const Bor = 23;
+            await researchManager.beginResearch(cityId, Bor, false)
+            let t = (await researchInfo.researchInfo(Bor)).TimeRequired.add(1).toNumber()
+            await time.increase(t);
+            const researched = await researchManager.isResearched(cityId, Bor)
+            expect(researched).to.be.true
+        })
+
+        it("should research Architecture", async () => {
+            const Architecture = 24;
+            await researchManager.beginResearch(cityId, Architecture, false)
+            let t = (await researchInfo.researchInfo(Architecture)).TimeRequired.add(1).toNumber()
+            await time.increase(t);
+            const researched = await researchManager.isResearched(cityId, Architecture)
+            expect(researched).to.be.true
+        })
+
+        it("building time and cost reduce works", async () => {
+            const building = await buildings.buildingInfo(0)
+            console.log(building.Cost);
+            console.log("base time: ");
+            console.log(building.UpgradeTime[1].toNumber());
+            const bal1 = await resources.cityResources(1, 1)
+            console.log("pre bal:");
+            console.log(bal1.toNumber());
+
+            await cityManager.upgradeBuilding(cityId, 0, false)
+            const completions = (await cityManager.buildingUpgradeCompletionTimes(cityId)).map(a => a.toNumber())
+            console.log(
+                { completion: completions[0] }
+            );
+            const timeStamp = (await ethers.provider.getBlock("latest")).timestamp
+            console.log({ timeStamp });
+            const timeReq = completions[0] - timeStamp
+            console.log({ timeReq });
+            const bal2 = await resources.cityResources(1, 1)
+            console.log("post bal:");
+            console.log(bal2.toNumber())
+            console.log("diff");
+            console.log(bal1.sub(bal2).toNumber());
         })
 
     });

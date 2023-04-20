@@ -5,11 +5,14 @@ import {LibCityManager} from "../libraries/LibCityManager.sol";
 import {LibBuildings} from "../libraries/LibBuildings.sol";
 import {LibResources} from "../libraries/LibResources.sol";
 import {LibResourceCalculator} from "../libraries/LibResourceCalculator.sol";
+import {LibResearchManager} from "../libraries/LibResearchManager.sol";
 import {IFetchGlobal} from "../interfaces/IFetchGlobal.sol";
 import {Modifiers} from "../libraries/LibAppStorage.sol";
 import {Coords} from "../shared/WorldStructs.sol";
 import {City, Building} from "../shared/CityStructs.sol";
 import {Race} from "../shared/CityEnums.sol";
+import {Research} from "../shared/ResearchStructs.sol";
+import {ResearchBonusType} from "../shared/ResearchEnums.sol";
 import "../shared/Errors.sol";
 //  LibResourceCalculator.claimAllResources(s, cityId, limits);
 
@@ -81,21 +84,38 @@ contract CityManagerFacet is Modifiers {
         if (_building.MaxTier <= currentTier) {
             revert ErrorExceeds(_building.MaxTier, currentTier);
         }
-
+        (uint reducedTime, uint reducedCost) = buildingResearchModifiers(cityId);
         // calculate resources
         uint[] memory _costs = new uint[](MAX_RESOURCE_ID);
         for (uint i = 0; i < MAX_RESOURCE_ID; i++) {
-            _costs[i] = _building.Cost[currentTier + 1][i];
+            _costs[i] = _building.Cost[currentTier + 1][i] - ((_building.Cost[currentTier + 1][i] * reducedCost) / 100);
         }
 
         LibResources.spendResources(cityId, _costs, autoClaim);
         s.BuildingLevels[cityId][buildingId].Tier++;
-        uint Deadline = block.timestamp + _building.UpgradeTime[currentTier];
+        uint Deadline = block.timestamp + (_building.UpgradeTime[currentTier] - ((_building.UpgradeTime[currentTier] * reducedTime)) / 100);
 
         // implement research and reductions
         s.BuildingLevelActivationTime[cityId][buildingId] = Deadline;
 
         emit BuildingUpgraded(cityId, buildingId, currentTier + 1, Deadline);
+    }
+
+    function buildingResearchModifiers(uint cityId) public view returns (uint reducedupgradeTime, uint reducedupgradeCost) {
+        uint[] memory upgradeTimeResearchs = LibResearchManager.researchIdsByBonusType(ResearchBonusType.REDUCE_BUILDING_TIME);
+        uint[] memory upgradeCostResearchs = LibResearchManager.researchIdsByBonusType(ResearchBonusType.REDUCE_BUILDING_COST);
+        for (uint i = 0; i < upgradeTimeResearchs.length; i++) {
+            if (LibResearchManager.isResearched(cityId, upgradeTimeResearchs[i])) {
+                Research memory _research = IFetchGlobal(address(this)).researchInfo(upgradeTimeResearchs[i]);
+                reducedupgradeTime += _research.UtilityValue;
+            }
+        }
+        for (uint i = 0; i < upgradeCostResearchs.length; i++) {
+            if (LibResearchManager.isResearched(cityId, upgradeCostResearchs[i])) {
+                Research memory _research = IFetchGlobal(address(this)).researchInfo(upgradeCostResearchs[i]);
+                reducedupgradeCost += _research.UtilityValue;
+            }
+        }
     }
 
     function recruitPopulation(uint cityId) external onlyCityOwner(cityId) {
@@ -137,5 +157,16 @@ contract CityManagerFacet is Modifiers {
             }
         }
         return _recruitable;
+    }
+
+    function buildingUpgradeCompletionTimes(uint cityId) external view returns (uint[] memory) {
+        uint[] memory result = new uint[](s.MAX_BUILDING_ID);
+        for (uint i = 0; i < s.MAX_BUILDING_ID; ) {
+            result[i] = s.BuildingLevelActivationTime[cityId][i];
+            unchecked {
+                i++;
+            }
+        }
+        return result;
     }
 }
