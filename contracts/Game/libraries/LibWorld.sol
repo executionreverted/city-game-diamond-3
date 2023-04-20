@@ -6,101 +6,19 @@ import {LibCityManager} from "./LibCityManager.sol";
 import {LibCities} from "./LibCities.sol";
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import {LibCalculator} from "./LibCalculator.sol";
-import {LibPerlinNoise} from "./LibPerlinNoise.sol";
-import {LibTrigonometry} from "./LibTrigonometry.sol";
 import {Coords, Plot, PlotContentTypes} from "../shared/WorldStructs.sol";
 import {Building, City, Race} from "../shared/CityStructs.sol";
 import {Resource} from "../shared/ResourceEnums.sol";
+import {IFetchGlobal} from "../interfaces/IFetchGlobal.sol";
 import "../shared/Errors.sol";
 
 library LibWorld {
-    event CityCreated(uint indexed cityId, address indexed owner, Coords coords);
-
-    function createCity(Coords memory coords, bool pickClosest, Race race) internal returns (Coords memory _coords) {
-        AppStorage storage s = LibAppStorage.diamondStorage();
-        bool isEmpty = isPlotEmpty(coords);
-        if ((!isEmpty && !pickClosest) || ((coords.X == 0 && coords.Y == 0))) revert ErrorInvalidWorldCoordinates(coords.X, coords.Y);
-
-        if (coords.X > 0) {
-            if (coords.X - 100 > s.WorldState.LastXPositive) revert ErrorInvalidWorldCoordinates(coords.X, coords.Y);
-        } else {
-            if (coords.X + 100 < s.WorldState.LastXNegative) revert ErrorInvalidWorldCoordinates(coords.X, coords.Y);
-        }
-
-        if (coords.Y > 0) {
-            if (coords.Y - 100 > s.WorldState.LastYPositive) revert ErrorInvalidWorldCoordinates(coords.X, coords.Y);
-        } else {
-            if (coords.Y + 100 < s.WorldState.LastYNegative) revert ErrorInvalidWorldCoordinates(coords.X, coords.Y);
-        }
-
-        address to = LibMeta.msgSender();
-
-        _coords = getNextCity(coords, true);
-
-        uint token = LibCities.mint(to, _coords, race);
-        s.CoordsToCity[_coords.X][_coords.Y] = token;
-        s.CoordsToPlot[_coords.X][_coords.Y].IsTaken = true;
-
-        if (_coords.X > 0) {
-            if (s.WorldState.LastXPositive < _coords.X) s.WorldState.LastXPositive = _coords.X;
-        } else {
-            if (s.WorldState.LastXNegative > _coords.X) s.WorldState.LastXNegative = _coords.X;
-        }
-
-        if (_coords.Y > 0) {
-            if (s.WorldState.LastYPositive < _coords.Y) s.WorldState.LastYPositive = _coords.Y;
-        } else {
-            if (s.WorldState.LastYNegative > _coords.Y) s.WorldState.LastYNegative = _coords.Y;
-        }
-
-        s.CityCoords[token] = _coords;
-        emit CityCreated(token, to, _coords);
+    function noise(int x, int y) internal view returns (int) {
+        return IFetchGlobal(address(this)).noise2d(x, y);
     }
 
-    function getNextCity(Coords memory requestedCoords, bool flip) internal view returns (Coords memory _finalCoords) {
-        if (isPlotEmpty(requestedCoords)) return requestedCoords;
-
-        _finalCoords = requestedCoords;
-
-        while (!isPlotEmpty(_finalCoords)) {
-            if (_finalCoords.X == _finalCoords.Y || flip) {
-                if (_finalCoords.X > 0) {
-                    _finalCoords.X++;
-                } else {
-                    _finalCoords.X--;
-                }
-            } else {
-                if (_finalCoords.Y > 0) {
-                    _finalCoords.Y++;
-                } else {
-                    _finalCoords.Y--;
-                }
-            }
-            flip = !flip;
-        }
-
-        return getNextCity(_finalCoords, flip);
-    }
-
-    function isPlotEmpty(Coords memory coords) internal view returns (bool) {
-        AppStorage storage s = LibAppStorage.diamondStorage();
-        Plot memory _plot = plotProps(coords);
-        return
-            (_plot.Content.Type == PlotContentTypes.HABITABLE && !s.CoordsToPlot[coords.X][coords.Y].IsTaken) ||
-            s.CoordsToCity[coords.X][coords.Y] == 0;
-    }
-
-    function plotProps(Coords memory _coords) internal view returns (Plot memory _plot) {
-        // param 1
-        // use cos and noise
-        AppStorage storage s = LibAppStorage.diamondStorage();
-
-        if (_coords.X == 0 && _coords.Y == 0) {
-            _plot.Content.Type = PlotContentTypes.INHABITABLE;
-            return _plot;
-        }
-
-        _plot = generatePlotContent(s, _plot, _coords);
+    function sin(uint16 x) internal view returns (int) {
+        return IFetchGlobal(address(this)).sin(x);
     }
 
     function generatePlotContent(AppStorage storage s, Plot memory _plot, Coords memory _coords) internal view returns (Plot memory) {
@@ -125,10 +43,7 @@ library LibWorld {
             b = type(uint16).max;
         }
 
-        _plot.Climate = LibPerlinNoise.noise2d(
-            LibTrigonometry.sin(uint16(a % 65536)) * s.NOISE_AMOUNT * s.MAP_SEED,
-            LibTrigonometry.sin(uint16(b % 65536)) * s.NOISE_AMOUNT * s.MAP_SEED
-        );
+        _plot.Climate = noise(sin(uint16(a % 65536)) * s.NOISE_AMOUNT * s.MAP_SEED, sin(uint16(b % 65536)) * s.NOISE_AMOUNT * s.MAP_SEED);
 
         uint randomness1 = useRandom(s, _coords, 316942069, 100); // determine if has plot content & what type it is
         uint randomness2 = useRandom(s, _coords, 420, 100); // determine plot content type e.g Resource Food

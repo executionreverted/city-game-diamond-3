@@ -30,17 +30,18 @@ export async function deployDiamond() {
     console.log('Deploying facets')
     const FacetNames = [
         'BuildingsFacet',
+        'CalculatorFacet',
         'CityManagerFacet',
         'CityNFTFacet',
-        'ResourcesFacet',
-        'TroopCommandsFacet',
-        'TroopsManagerFacet',
-        'TroopMovementsFacet',
-        'WorldFacet',
-        'ResearchsFacet',
+        'PerlinNoiseFacet',
         'ResearchManagerFacet',
-        'CalculatorFacet',
-        // 'Test1Facet'
+        'ResearchsFacet',
+        'ResourcesFacet',
+        'TrigonometryFacet',
+        'TroopCommandsFacet',
+        'TroopMovementsFacet',
+        'TroopsManagerFacet',
+        'WorldFacet',
     ]
 
     // const UpgradedFacets = [
@@ -52,6 +53,7 @@ export async function deployDiamond() {
         const facet = await Facet.deploy()
         await facet.deployed()
         console.log(`${FacetName} deployed: ${facet.address}`)
+
         cut.push({
             facetAddress: facet.address,
             action: FacetCutAction.Add,

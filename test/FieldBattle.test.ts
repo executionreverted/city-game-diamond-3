@@ -7,11 +7,16 @@ import { deployDiamond } from "./deploy";
 import { TroopMovementsFacet } from "../typechain-types/contracts/Game/facets/TroopMovementsFacet.sol";
 let cities: CityNFTFacet;
 let gameWorld: WorldFacet;
+let gameWorld2: WorldFacet;
 let cityManager: CityManagerFacet;
+let cityManager2: CityManagerFacet;
 let troops: TroopsManagerFacet;
 let troopsManager: TroopsManagerFacet;
+let troopsManager2: TroopsManagerFacet;
 let troopsMovement: TroopMovementsFacet;
+let troopsMovement2: TroopMovementsFacet;
 let troopCommands: TroopCommandsFacet;
+let troopCommands2: TroopCommandsFacet;
 let buildings: BuildingsFacet;
 let resources: ResourcesFacet;
 let calculator: CalculatorFacet;
@@ -29,19 +34,24 @@ describe("FieldBattle", function () {
 
     async function deployAll() {
         // console.log('Deploying contracts...');
-        const [owner$] = await ethers.getSigners();
+        const [owner$, owner$2] = await ethers.getSigners();
         owner = owner$;
         const diamond = await deployDiamond()
         cities = await ethers.getContractAt("CityNFTFacet", diamond) as any
         gameWorld = await ethers.getContractAt("WorldFacet", diamond) as any
+        gameWorld2 = await ethers.getContractAt("WorldFacet", diamond, owner$2) as any
         cityManager = await ethers.getContractAt("CityManagerFacet", diamond) as any
+        cityManager2 = await ethers.getContractAt("CityManagerFacet", diamond, owner$2) as any
         troops = await ethers.getContractAt("TroopsManagerFacet", diamond) as any
         troopsManager = await ethers.getContractAt("TroopsManagerFacet", diamond) as any
+        troopsManager2 = await ethers.getContractAt("TroopsManagerFacet", diamond, owner$2) as any
         troopsMovement = await ethers.getContractAt("TroopMovementsFacet", diamond) as any
+        troopsMovement2 = await ethers.getContractAt("TroopMovementsFacet", diamond, owner$2) as any
         buildings = await ethers.getContractAt("BuildingsFacet", diamond) as any
         resources = await ethers.getContractAt("ResourcesFacet", diamond) as any
         calculator = await ethers.getContractAt("CalculatorFacet", diamond) as any
         troopCommands = await ethers.getContractAt("TroopCommandsFacet", diamond) as any
+        troopCommands2 = await ethers.getContractAt("TroopCommandsFacet", diamond, owner$2) as any
     }
 
     before(async function () {
@@ -53,12 +63,15 @@ describe("FieldBattle", function () {
     it("Mint 10000 resources.", async function () {
         const [owner] = await ethers.getSigners();
         await gameWorld.createCity(cityCoords, true, 1)
+        await gameWorld2.createCity(cityCoords, true, 1)
         // await resources.setGameManager(owner.address, true)
         for (let i = 0; i < 5; i++) {
             await resources.addResource(cityId, i, 50000)
+            await resources.addResource(cityId + 1, i, 50000)
         }
         for (let i = 0; i < 4; i++) {
             expect((await resources.cityResources(cityId, i)).eq(50000)).to.be.true
+            expect((await resources.cityResources(cityId + 1, i)).eq(50000)).to.be.true
         }
         console.log(await cities.ownerOf(0));
         console.log(await cities.ownerOf(1));
@@ -77,6 +90,7 @@ describe("FieldBattle", function () {
             );
         }
         await cityManager.upgradeBuilding(cityId, barracksId)
+        await cityManager2.upgradeBuilding(cityId + 1, barracksId)
         console.log('2');
         console.log("City Blaances after upgrade: ");
         for (let index = 0; index < 5; index++) {
@@ -154,7 +168,9 @@ describe("FieldBattle", function () {
     it("Mint 100 soldier", async function () {
         const [owner] = await ethers.getSigners();
         await troopsManager.recruitTroops(cityId, [0], [40])
+        await troopsManager2.recruitTroops(cityId + 1, [0], [40])
         expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(40)
+        expect((await troopsManager.cityTroops(cityId + 1, 0)).toNumber()).to.eq(40)
     });
 
     it("Send squad to coords", async function () {
@@ -191,16 +207,16 @@ describe("FieldBattle", function () {
     it("Send squad 2 to coords", async function () {
         const coordsToSend = { X: 1, Y: 3 }
         const foodId = 4;
-        let resourceBalance = await resources.cityResources(cityId, foodId)
-        await troopsMovement.sendSquadTo(cityId, coordsToSend, [0], [20], 0)
-        let resourceAfter = await resources.cityResources(cityId, foodId)
+        let resourceBalance = await resources.cityResources(cityId + 1, foodId)
+        await troopsMovement2.sendSquadTo(cityId + 1, coordsToSend, [0], [20], 0)
+        let resourceAfter = await resources.cityResources(cityId + 1, foodId)
         let squad = await troopsManager.squadsById(1)
-        const activeSquadsOfCity = await troopsManager.cityActiveSquads(cityId)
+        const activeSquadsOfCity = await troopsManager.cityActiveSquads(cityId + 1)
         const squadsInPosition = await troopsManager.squadsIdOnWorld(coordsToSend)
         console.log(activeSquadsOfCity);
         expect(squad.Active).to.be.false
         console.log(2);
-        expect(activeSquadsOfCity.length).to.equal(2)
+        expect(activeSquadsOfCity.length).to.equal(1)
         console.log(1);
 
         expect(squadsInPosition.length).to.equal(1)
@@ -212,7 +228,7 @@ describe("FieldBattle", function () {
         resourceBalance = await resources.cityResources(cityId, foodId)
         expect(squad.Position.X.eq(coordsToSend.X)).to.be.true
         expect(squad.Position.Y.eq(coordsToSend.Y)).to.be.true
-        await time.increase(distance.toNumber() + 111)
+        await time.increase(distance.toNumber() + 1111)
         squad = await troopsManager.squadsById(1)
         expect(squad.Active).to.be.true
     });

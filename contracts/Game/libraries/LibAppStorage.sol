@@ -101,6 +101,7 @@ library LibAppStorage {
     }
 }
 
+
 contract Modifiers {
     AppStorage internal s;
 
@@ -122,4 +123,6 @@ contract Modifiers {
         require(s.CityList[cityId].Operator == sender, "Only city operator can call this function");
         _;
     }
+
+    
 }

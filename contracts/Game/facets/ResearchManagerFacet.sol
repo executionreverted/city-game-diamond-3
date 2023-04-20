@@ -7,6 +7,7 @@ import {LibResearchs} from "../libraries/LibResearchs.sol";
 import {LibResources} from "../libraries/LibResources.sol";
 import {Research} from "../shared/ResearchStructs.sol";
 import {ResearchBonusType} from "../shared/ResearchEnums.sol";
+import {IFetchGlobal} from "../interfaces/IFetchGlobal.sol";
 import "../shared/Errors.sol";
 
 contract ResearchManagerFacet is Modifiers {
@@ -16,7 +17,7 @@ contract ResearchManagerFacet is Modifiers {
         // must be not researched
         if (s.CityResearchesValidAfter[cityId][researchId] != 0) revert ErrorAlreadyGoingOn(researchId);
 
-        Research memory _research = LibResearchs.researchInfo(researchId);
+        Research memory _research = IFetchGlobal(address(this)).researchInfo(researchId);
 
         // check requirement before
         if (_research.RequiredResearchId != 0 && !isResearched(cityId, _research.RequiredResearchId)) {
@@ -52,7 +53,7 @@ contract ResearchManagerFacet is Modifiers {
         // reduce cost
         for (uint i = 0; i < researchCostResearchs.length; ) {
             if (researchCostResearchs[i] != 0 && isResearched(cityId, researchCostResearchs[i])) {
-                Research memory _targetResearch = LibResearchs.researchInfo(researchCostResearchs[i]);
+                Research memory _targetResearch = IFetchGlobal(address(this)).researchInfo(researchCostResearchs[i]);
                 reducedCost += _targetResearch.UtilityValue;
             }
             unchecked {
@@ -67,7 +68,7 @@ contract ResearchManagerFacet is Modifiers {
         // reduce time
         for (uint i = 0; i < researchTimeResearchs.length; ) {
             if (researchCostResearchs[i] != 0 && isResearched(cityId, researchCostResearchs[i])) {}
-            Research memory _targetResearch = LibResearchs.researchInfo(researchCostResearchs[i]);
+            Research memory _targetResearch = IFetchGlobal(address(this)).researchInfo(researchCostResearchs[i]);
             reducedTime += _targetResearch.UtilityValue;
             unchecked {
                 i++;

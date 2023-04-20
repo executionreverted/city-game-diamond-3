@@ -5,6 +5,7 @@ import {LibCityManager} from "../libraries/LibCityManager.sol";
 import {LibBuildings} from "../libraries/LibBuildings.sol";
 import {LibResources} from "../libraries/LibResources.sol";
 import {LibResourceCalculator} from "../libraries/LibResourceCalculator.sol";
+import {IFetchGlobal} from "../interfaces/IFetchGlobal.sol";
 import {Modifiers} from "../libraries/LibAppStorage.sol";
 import {Coords} from "../shared/WorldStructs.sol";
 import {City, Building} from "../shared/CityStructs.sol";
@@ -67,7 +68,7 @@ contract CityManagerFacet is Modifiers {
         }
 
         uint currentTier = s.BuildingLevels[cityId][buildingId].Tier;
-        Building memory _building = LibBuildings.buildingInfo(buildingId);
+        Building memory _building = IFetchGlobal(address(this)).buildingInfo(buildingId);
         if (_building.MaxTier <= currentTier) {
             revert ErrorExceeds(_building.MaxTier, currentTier);
         }
@@ -129,3 +130,5 @@ contract CityManagerFacet is Modifiers {
         return _recruitable;
     }
 }
+
+

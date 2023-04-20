@@ -13,16 +13,91 @@ import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import "../shared/Errors.sol";
 
 contract WorldFacet is Modifiers {
+    event CityCreated(uint indexed cityId, address indexed owner, Coords coords);
+
     function createCity(Coords memory coords, bool pickClosest, Race race) external returns (Coords memory _coords) {
-        _coords = LibWorld.createCity(coords, pickClosest, race);
+        bool isEmpty = isPlotEmpty(coords);
+        if ((!isEmpty && !pickClosest) || ((coords.X == 0 && coords.Y == 0))) revert ErrorInvalidWorldCoordinates(coords.X, coords.Y);
+
+        if (coords.X > 0) {
+            if (coords.X - 100 > s.WorldState.LastXPositive) revert ErrorInvalidWorldCoordinates(coords.X, coords.Y);
+        } else {
+            if (coords.X + 100 < s.WorldState.LastXNegative) revert ErrorInvalidWorldCoordinates(coords.X, coords.Y);
+        }
+
+        if (coords.Y > 0) {
+            if (coords.Y - 100 > s.WorldState.LastYPositive) revert ErrorInvalidWorldCoordinates(coords.X, coords.Y);
+        } else {
+            if (coords.Y + 100 < s.WorldState.LastYNegative) revert ErrorInvalidWorldCoordinates(coords.X, coords.Y);
+        }
+
+        address to = LibMeta.msgSender();
+
+        _coords = getNextCity(coords, true);
+
+        uint token = LibCities.mint(to, _coords, race);
+        s.CoordsToCity[_coords.X][_coords.Y] = token;
+        s.CoordsToPlot[_coords.X][_coords.Y].IsTaken = true;
+
+        if (_coords.X > 0) {
+            if (s.WorldState.LastXPositive < _coords.X) s.WorldState.LastXPositive = _coords.X;
+        } else {
+            if (s.WorldState.LastXNegative > _coords.X) s.WorldState.LastXNegative = _coords.X;
+        }
+
+        if (_coords.Y > 0) {
+            if (s.WorldState.LastYPositive < _coords.Y) s.WorldState.LastYPositive = _coords.Y;
+        } else {
+            if (s.WorldState.LastYNegative > _coords.Y) s.WorldState.LastYNegative = _coords.Y;
+        }
+
+        s.CityCoords[token] = _coords;
+        emit CityCreated(token, to, _coords);
     }
 
     function cityCoords(uint cityId) external view returns (Coords memory _coords) {
         return s.CityCoords[cityId];
     }
 
-    function isPlotEmpty(Coords memory coords) external view returns (bool) {
-        Plot memory _plot = LibWorld.plotProps(coords);
+    function getNextCity(Coords memory requestedCoords, bool flip) internal view returns (Coords memory _finalCoords) {
+        if (isPlotEmpty(requestedCoords)) return requestedCoords;
+
+        _finalCoords = requestedCoords;
+
+        while (!isPlotEmpty(_finalCoords)) {
+            if (_finalCoords.X == _finalCoords.Y || flip) {
+                if (_finalCoords.X > 0) {
+                    _finalCoords.X++;
+                } else {
+                    _finalCoords.X--;
+                }
+            } else {
+                if (_finalCoords.Y > 0) {
+                    _finalCoords.Y++;
+                } else {
+                    _finalCoords.Y--;
+                }
+            }
+            flip = !flip;
+        }
+
+        return getNextCity(_finalCoords, flip);
+    }
+
+    function plotProps(Coords memory _coords) internal view returns (Plot memory _plot) {
+        // param 1
+        // use cos and noise
+
+        if (_coords.X == 0 && _coords.Y == 0) {
+            _plot.Content.Type = PlotContentTypes.INHABITABLE;
+            return _plot;
+        }
+
+        _plot = LibWorld.generatePlotContent(s, _plot, _coords);
+    }
+
+    function isPlotEmpty(Coords memory coords) public view returns (bool) {
+        Plot memory _plot = plotProps(coords);
         return
             (_plot.Content.Type == PlotContentTypes.HABITABLE && !s.CoordsToPlot[coords.X][coords.Y].IsTaken) ||
             s.CoordsToCity[coords.X][coords.Y] == 0;
@@ -86,9 +161,5 @@ contract WorldFacet is Modifiers {
         }
 
         return resultPlots;
-    }
-
-    function plotProps(Coords memory _coords) external view returns (Plot memory _plot) {
-        return LibWorld.plotProps(_coords);
     }
 }

@@ -10,6 +10,7 @@ import {ProductionArgs} from "../shared/ResourceStructs.sol";
 import {Resource} from "../shared/ResourceEnums.sol";
 import {Research} from "../shared/ResearchStructs.sol";
 import {ResearchBonusType} from "../shared/ResearchEnums.sol";
+import {IFetchGlobal} from "../interfaces/IFetchGlobal.sol";
 import "../shared/Errors.sol";
 
 library LibResourceCalculator {
@@ -105,14 +106,10 @@ library LibResourceCalculator {
         for (uint i = 0; i < resourceBoostResearchs.length; i++) {
             if (resourceBoostResearchs[i] != 0 && LibResearchManager.isResearched(cityId, resourceBoostResearchs[i])) {
                 // Research memory _targetResearch = LibResearchs.researchInfo(resourceBoostResearchs[i]);
-                Research memory _targetResearch = GetResearch(address(this)).researchInfo(resourceBoostResearchs[i]);
+                Research memory _targetResearch = IFetchGlobal(address(this)).researchInfo(resourceBoostResearchs[i]);
                 resourceBoostAmount += _targetResearch.UtilityValue;
             }
         }
         return resourceBoostAmount;
     }
-}
-
-interface GetResearch {
-    function researchInfo(uint researchId) external pure returns (Research memory);
 }

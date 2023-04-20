@@ -45,13 +45,36 @@ contract ResourcesFacet is Modifiers {
         return s.CityResources[cityId][uint(resource)];
     }
 
-    function harvestableResource(uint256 cityId, Resource resource) external view returns (uint256[] memory) {
+    function harvestableResources(uint256 cityId) external view returns (uint256[] memory) {
         uint[] memory claimable = new uint[](s.MAX_RESOURCE_ID);
         uint resourceBoostAmount = LibResourceCalculator.resourceResearchBonus(cityId, ResearchBonusType.WOOD_BONUS);
         for (uint i = 1; i < claimable.length; i++) {
             claimable[i] = LibResourceCalculator.calculateHarvestableResource(s, cityId, Resource(i), resourceBoostAmount);
         }
         return claimable;
+    }
+
+    function resourcesPerTick(uint256 cityId) external view returns (uint256[] memory) {
+        uint[] memory claimable = new uint[](s.MAX_RESOURCE_ID);
+        uint resourceBoostAmount = LibResourceCalculator.resourceResearchBonus(cityId, ResearchBonusType.WOOD_BONUS);
+
+        for (uint i = 1; i < claimable.length; i++) {
+            uint buildingLevel = s.BuildingLevels[cityId][i].Tier;
+            if (block.timestamp < s.BuildingLevelActivationTime[cityId][i]) {
+                buildingLevel -= 1;
+            }
+
+            claimable[i] = LibResourceCalculator.productionRate(
+                s,
+                ProductionArgs({cityId: cityId, resource: Resource(i), boostAmount: resourceBoostAmount, buildingLvl: buildingLevel})
+            );
+        }
+        return claimable;
+    }
+
+    function resourceResearchBonus(uint256 cityId) external view returns (uint256) {
+        uint resourceBoostAmount = LibResourceCalculator.resourceResearchBonus(cityId, ResearchBonusType.WOOD_BONUS);
+        return resourceBoostAmount;
     }
 
     function lastClaims(uint256 cityId, Resource resource) external view returns (uint256) {
