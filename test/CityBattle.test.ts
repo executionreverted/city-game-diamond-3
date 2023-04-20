@@ -2,9 +2,8 @@ import { ethers, upgrades } from "hardhat";
 import { expect } from "chai";
 import { time } from "@nomicfoundation/hardhat-network-helpers";
 import "hardhat-gas-reporter"
-import { BuildingsFacet, CalculatorFacet, CityManagerFacet, CityNFTFacet, ResourcesFacet, TroopCommandsFacet, TroopsManagerFacet, WorldFacet } from "../typechain-types";
+import { BuildingsFacet, CalculatorFacet, CityManagerFacet, CityNFTFacet, ResourcesFacet, TroopCommandsFacet, TroopMovementsFacet, TroopsManagerFacet, WorldFacet } from "../typechain-types";
 import { deployDiamond } from "./deploy";
-import { TroopMovementsFacet } from "../typechain-types/contracts/Game/facets/TroopMovementsFacet.sol";
 let cities: CityNFTFacet;
 let gameWorld: WorldFacet;
 let gameWorld2: WorldFacet;
@@ -124,7 +123,19 @@ describe("CityBattle", function () {
     it("Mint 100 soldier", async function () {
         const [owner] = await ethers.getSigners();
         await troopsManager.recruitTroops(cityId, [0], [1000], true)
+        const trn = await troopsManager.cityActiveTrainings(cityId)
+        expect(trn.length).to.eq(1)
+        const timeStamp = (await ethers.provider.getBlock("latest")).timestamp
+        await time.increase(trn[0].EndTime.sub(timeStamp).add(1))
+        await troopsManager.finalizeTraining(cityId, 0);
+
         await troopsManager2.recruitTroops(cityId + 1, [0], [5], true)
+        const trn2 = await troopsManager2.cityActiveTrainings(cityId)
+        expect(trn.length).to.eq(1)
+        const timeStamp2 = (await ethers.provider.getBlock("latest")).timestamp
+        await time.increase(trn[0].EndTime.sub(timeStamp2).add(1))
+        await troopsManager2.finalizeTraining(cityId, 1);
+
         expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(1000)
         expect((await troopsManager.cityTroops(cityId + 1, 0)).toNumber()).to.eq(5)
     });

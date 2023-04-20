@@ -17,21 +17,18 @@ library LibResourceCalculator {
     event ClaimTax(uint indexed cityId, uint amount);
     event ClaimResource(uint indexed cityId, Resource indexed resourceId, uint amount);
 
-    function claimAllResources(AppStorage storage s, uint cityId, uint[] memory limits) internal {
-        _claimCityGold(s, cityId);
-        uint resourceBoostAmount = resourceResearchBonus(cityId, ResearchBonusType.WOOD_BONUS);
-        for (uint i = 0; i < s.MAX_RESOURCE_ID; i++) {
+    function claimAllResources(AppStorage storage s, uint cityId, uint[] memory limits, uint resourceBoostAmount) internal {
+        for (uint i = 1; i < s.MAX_RESOURCE_ID; i++) {
             LibResourceCalculator._claimSingle(s, cityId, Resource(i), limits[uint(i)], resourceBoostAmount);
         }
     }
 
     function claimResource(AppStorage storage s, uint cityId, Resource resource, uint limit) internal {
-        uint resourceBoostAmount = resourceResearchBonus(cityId, ResearchBonusType.WOOD_BONUS);
+        (uint resourceBoostAmount,) = resourceResearchBonus(cityId);
         LibResourceCalculator._claimSingle(s, cityId, resource, limit, resourceBoostAmount);
     }
 
-    function _claimCityGold(AppStorage storage s, uint cityId) internal {
-        uint _claimableGold = claimableGold(s, cityId);
+    function _claimCityGold(AppStorage storage s, uint cityId, uint _claimableGold) internal {
         if (_claimableGold > 0) {
             s.LastClaims[cityId][uint(0)] = block.timestamp;
             s.CityResources[cityId][uint(0)] += _claimableGold;
@@ -100,9 +97,10 @@ library LibResourceCalculator {
         _rounds = elapsed / s.PROD_CYCLE;
     }
 
-    function resourceResearchBonus(uint cityId, ResearchBonusType _type) internal view returns (uint) {
+    function resourceResearchBonus(uint cityId) internal view returns (uint, uint) {
         uint resourceBoostAmount;
-        uint[] memory resourceBoostResearchs = LibResearchManager.researchIdsByBonusType(_type);
+        uint goldBoostAmount;
+        uint[] memory resourceBoostResearchs = LibResearchManager.researchIdsByBonusType(ResearchBonusType.WOOD_BONUS);
         for (uint i = 0; i < resourceBoostResearchs.length; i++) {
             if (resourceBoostResearchs[i] != 0 && LibResearchManager.isResearched(cityId, resourceBoostResearchs[i])) {
                 // Research memory _targetResearch = LibResearchs.researchInfo(resourceBoostResearchs[i]);
@@ -110,6 +108,13 @@ library LibResourceCalculator {
                 resourceBoostAmount += _targetResearch.UtilityValue;
             }
         }
-        return resourceBoostAmount;
+        uint[] memory goldBonusResearchs = LibResearchManager.researchIdsByBonusType((ResearchBonusType.GOLD_BONUS));
+        for (uint i = 0; i < goldBonusResearchs.length; i++) {
+            if (LibResearchManager.isResearched(cityId, goldBonusResearchs[i])) {
+                Research memory _research = IFetchGlobal(address(this)).researchInfo(goldBonusResearchs[i]);
+                goldBoostAmount += _research.UtilityValue;
+            }
+        }
+        return (resourceBoostAmount, goldBoostAmount);
     }
 }

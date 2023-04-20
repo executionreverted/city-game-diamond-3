@@ -47,6 +47,7 @@ contract GameInit {
         s.BARRACKS_ID = 6;
         s.ACTION_RANGE = 3;
         s.RESEARCH_CENTER_ID = 9;
+        s.MAX_TRAINING = 15;
         // adding ERC165 data
         ds.supportedInterfaces[type(IERC165).interfaceId] = true;
         ds.supportedInterfaces[type(IDiamondCut).interfaceId] = true;

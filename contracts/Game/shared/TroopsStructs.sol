@@ -24,7 +24,14 @@ struct TroopCost {
     uint MinBarracksLevel;
     uint FoodCostMultiplier;
     uint RequiredResearch;
+    uint TimeRequired;
     uint[100] ResourceCost;
+}
+
+struct Training {
+    uint EndTime;
+    uint8[] TroopIds;
+    uint[] TroopAmounts;
 }
 
 struct Squad {

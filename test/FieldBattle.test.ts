@@ -81,9 +81,8 @@ describe("FieldBattle", function () {
     });
 
     it("give premium", async () => {
-        await gameWorld.createCity(desiredCoords, true, 1)
-        await cityManager.setPremiumStatus(1, 1, 1)
-        await cityManager.setPremiumStatus(2, 1, 1)
+        await cityManager.setPremiumStatus(1, 1, 2)
+        await cityManager.setPremiumStatus(2, 1, 2)
         const status = await cityManager.premiumStatus(1)
         console.log('City has premium tier: ', status._tier.toNumber());
 
@@ -177,9 +176,27 @@ describe("FieldBattle", function () {
     it("Mint 100 soldier", async function () {
         const [owner] = await ethers.getSigners();
         await troopsManager.recruitTroops(cityId, [0], [40], true)
+        const trn = await troopsManager.cityActiveTrainings(cityId)
+        console.log(trn);
+        expect(trn.length).to.eq(1)
+        const timeStamp = (await ethers.provider.getBlock("latest")).timestamp
+        console.log(timeStamp);
+
+        console.log(trn[0].EndTime.toNumber() - timeStamp);
+
+        await time.increase(trn[0].EndTime.toNumber() - timeStamp)
+        await troopsManager.finalizeTraining(cityId, 0);
+
         await troopsManager2.recruitTroops(cityId + 1, [0], [40], true)
-        expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(40)
-        expect((await troopsManager.cityTroops(cityId + 1, 0)).toNumber()).to.eq(40)
+        const trn2 = await troopsManager2.cityActiveTrainings(cityId + 1)
+        expect(trn2.length).to.eq(1)
+        const timeStamp2 = (await ethers.provider.getBlock("latest")).timestamp
+        console.log(trn2[0].EndTime.toNumber() - timeStamp2);
+
+        await time.increase(trn2[0].EndTime.toNumber() - timeStamp2)
+        await troopsManager2.finalizeTraining(cityId + 1, 1);
+        expect((await troopsManager2.cityTroops(cityId, 0)).toNumber()).to.eq(40)
+        expect((await troopsManager2.cityTroops(cityId + 1, 0)).toNumber()).to.eq(40)
     });
 
     it("Send squad to coords", async function () {

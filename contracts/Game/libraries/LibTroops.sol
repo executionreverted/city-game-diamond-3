@@ -51,6 +51,7 @@ library LibTroops {
         _baseTroop.Cost.ResourceCost[2] = 1; // STONE
         _baseTroop.Cost.ResourceCost[3] = 1; // IRON
         _baseTroop.Cost.ResourceCost[4] = 1; // FOOD
+        _baseTroop.Cost.TimeRequired = 2 minutes; // TIME
         _baseTroop.Cost.MinBarracksLevel = 1;
         _baseTroop.Population = 0;
 

@@ -9,7 +9,11 @@ import {LibResearchs} from "./LibResearchs.sol";
 import {LibResourceCalculator} from "./LibResourceCalculator.sol";
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import {Resource} from "../shared/ResourceEnums.sol";
+import {Research} from "../shared/ResearchStructs.sol";
+import {ResearchBonusType} from "../shared/ResearchEnums.sol";
+import {IFetchGlobal} from "../interfaces/IFetchGlobal.sol";
 import "../shared/Errors.sol";
+import "hardhat/console.sol";
 
 library LibResources {
     event SpendResource(uint indexed cityId, Resource indexed resource, uint amount);
@@ -44,14 +48,27 @@ library LibResources {
     function spendResources(uint cityId, uint[] memory amounts, bool claimUnClaimable) internal {
         uint[] memory limits = getCityStorage(cityId);
         AppStorage storage s = LibAppStorage.diamondStorage();
-        bool isPremium = s.CITY_PREMIUM_STATUS[cityId] > 0;
-        uint expirationDate = s.CITY_PREMIUM_EXPIRE_DATE[cityId];
-        if ((!isPremium || block.timestamp > expirationDate) && claimUnClaimable) revert ErrorNoPremium(LibMeta.msgSender());
-        if (isPremium && claimUnClaimable && block.timestamp < expirationDate) {
-            LibResourceCalculator.claimAllResources(s, cityId, limits);
+        bool isPremium = s.CITY_PREMIUM_STATUS[cityId] > 0 && s.CITY_PREMIUM_EXPIRE_DATE[cityId] > block.timestamp;
+
+        if (!isPremium && claimUnClaimable) revert ErrorNoPremium(LibMeta.msgSender());
+
+        if (isPremium && claimUnClaimable) {
+            (uint boostAmt, uint goldBoostAmt) = LibResourceCalculator.resourceResearchBonus(cityId);
+            uint claimable = (s.CityList[cityId].Population * s.BaseProductions[0]);
+            claimable = claimable + ((claimable * goldBoostAmt) / 100);
+            LibResourceCalculator._claimCityGold(s, cityId, claimable);
+            LibResourceCalculator.claimAllResources(s, cityId, limits, boostAmt);
         }
+
+        console.log("work");
         for (uint i = 0; i < s.MAX_RESOURCE_ID; ) {
-            if (amounts[i] == 0) continue;
+            console.log(amounts[i]);
+            if (amounts[i] == 0) {
+                unchecked {
+                    i++;
+                }
+                continue;
+            }
             if (amounts[i] > s.CityResources[cityId][uint(i)]) revert ErrorExceeds(amounts[i], s.CityResources[cityId][uint(i)]);
             s.CityResources[cityId][uint(i)] -= amounts[i];
             emit SpendResource(cityId, Resource(i), amounts[i]);

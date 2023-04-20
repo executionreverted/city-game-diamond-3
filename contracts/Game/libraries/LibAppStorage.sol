@@ -5,7 +5,7 @@ import {LibDiamond} from "../../shared/libraries/LibDiamond.sol";
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 import {World, Coords, Plot} from "../shared/WorldStructs.sol";
 import {City, Building} from "../shared/CityStructs.sol";
-import {Squad} from "../shared/TroopsStructs.sol";
+import {Squad, Training} from "../shared/TroopsStructs.sol";
 
 uint constant MAX_RACE_ID = 5;
 uint constant MAX_TROOP_ID = 100;
@@ -60,9 +60,14 @@ struct AppStorage {
     int MAP_SEED;
     uint EVENT_MAP_SEED;
     uint8 MAX_SQUADS_ON_PLOT;
-    uint8 BARRACKS_ID; // TROOPS
+    uint8 BARRACKS_ID;
+    // TROOPS
     uint squadNonces;
     mapping(uint => uint[MAX_TROOP_ID]) CityTroops;
+    uint trainingNonce;
+    uint MAX_TRAINING;
+    mapping(uint => Training) Trainings;
+    mapping(uint => EnumerableSet.UintSet) TrainingGoingOn;
     // movement stuff
     mapping(uint => Squad) SquadsById;
     mapping(int => mapping(int => EnumerableSet.UintSet)) SquadsIdOnWorld;

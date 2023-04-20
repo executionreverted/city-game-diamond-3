@@ -49,10 +49,10 @@ describe("Test1",
             await gameWorld.createCity(desiredCoords, true, 1)
             // await resources.setGameManager(owner.address, true)
             for (let i = 0; i < 5; i++) {
-                await resources.addResource(cityId, i, 250000)
+                await resources.addResource(cityId, i, 1050000)
             }
             for (let i = 0; i < 5; i++) {
-                expect((await resources.cityResources(cityId, i)).eq(250000)).to.be.true
+                expect((await resources.cityResources(cityId, i)).eq(1050000)).to.be.true
             }
         })
 
@@ -99,8 +99,8 @@ describe("Test1",
         it("should log current production", async () => {
             const bonus = await resources.resourceResearchBonus(cityId);
             console.log("bonus");
-            console.log(bonus.toNumber());
-            expect(bonus.toNumber()).to.eq(0)
+            console.log(bonus.resourceBoostAmount.toNumber());
+            expect(bonus.resourceBoostAmount.toNumber()).to.eq(0)
             console.log(
                 (await resources.resourcesPerTick(cityId)).map(a => a.toNumber())
             );
@@ -119,10 +119,41 @@ describe("Test1",
         it("production amount must be increased", async () => {
             const bonus = await resources.resourceResearchBonus(cityId);
             console.log("bonus");
-            console.log(bonus.toNumber());
-            expect(bonus.toNumber()).to.eq(5)
+            console.log(bonus.resourceBoostAmount.toNumber());
+            expect(bonus.resourceBoostAmount.toNumber()).to.eq(5)
             console.log(
                 (await resources.resourcesPerTick(cityId)).map(a => a.toNumber())
             );
         })
+
+        it("should research Savings 101", async () => {
+            const Savings = 2;
+            await researchManager.beginResearch(cityId, Savings, false)
+            let t = (await researchInfo.researchInfo(Savings)).TimeRequired.add(1).toNumber()
+            await time.increase(t);
+            const researched = await researchManager.isResearched(cityId, Savings)
+            expect(researched).to.be.true
+        })
+
+        it("should research VAT (Value Added Tax)", async () => {
+            const Savings = 3;
+            await researchManager.beginResearch(cityId, Savings, false)
+            let t = (await researchInfo.researchInfo(Savings)).TimeRequired.add(1).toNumber()
+            await time.increase(t);
+            const researched = await researchManager.isResearched(cityId, Savings)
+            expect(researched).to.be.true
+        })
+
+        it("gold reward amount must be increased", async () => {
+            const day = 86400;
+            await time.increase(day)
+            const bonus = await resources.resourceResearchBonus(cityId);
+            console.log("bonus");
+            console.log(bonus.goldBoostAmount.toNumber());
+            expect(bonus.goldBoostAmount.toNumber()).to.eq(2)
+            console.log(
+                (await resources.claimableGold(cityId, true)).toNumber()
+            );
+        })
+
     });
