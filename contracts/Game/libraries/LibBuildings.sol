@@ -584,32 +584,32 @@ library LibBuildings {
     function enterResourceCost(Building memory _baseBuilding) internal view returns (Building memory) {
         uint len = _baseBuilding.MaxTier + 1;
         _baseBuilding.Cost = generateCostArray(len);
-        for (uint i = 1; i < len; ) {
-            _baseBuilding.Cost[i][0] = calculateValue(
+        for (uint i = 1; i <= len; ) {
+            _baseBuilding.Cost[i - 1][0] = calculateValue(
                 i,
                 _baseBuilding.BaseCosts.BaseGold,
                 _baseBuilding.BaseCosts.BaseGoldCoefficient1,
                 _baseBuilding.BaseCosts.BaseGoldCoefficient2
             );
-            _baseBuilding.Cost[i][1] = calculateValue(
+            _baseBuilding.Cost[i - 1][1] = calculateValue(
                 i,
                 _baseBuilding.BaseCosts.BaseWood,
                 _baseBuilding.BaseCosts.BaseWoodCoefficient1,
                 _baseBuilding.BaseCosts.BaseWoodCoefficient2
             );
-            _baseBuilding.Cost[i][2] = calculateValue(
+            _baseBuilding.Cost[i - 1][2] = calculateValue(
                 i,
                 _baseBuilding.BaseCosts.BaseStone,
                 _baseBuilding.BaseCosts.BaseStoneCoefficient1,
                 _baseBuilding.BaseCosts.BaseStoneCoefficient2
             );
-            _baseBuilding.Cost[i][3] = calculateValue(
+            _baseBuilding.Cost[i - 1][3] = calculateValue(
                 i,
                 _baseBuilding.BaseCosts.BaseIron,
                 _baseBuilding.BaseCosts.BaseIronCoefficient1,
                 _baseBuilding.BaseCosts.BaseIronCoefficient2
             );
-            _baseBuilding.Cost[i][4] = calculateValue(
+            _baseBuilding.Cost[i - 1][4] = calculateValue(
                 i,
                 _baseBuilding.BaseCosts.BaseFood,
                 _baseBuilding.BaseCosts.BaseFoodCoefficient1,

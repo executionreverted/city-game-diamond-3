@@ -88,7 +88,7 @@ contract CityManagerFacet is Modifiers {
         // calculate resources
         uint[] memory _costs = new uint[](MAX_RESOURCE_ID);
         for (uint i = 0; i < MAX_RESOURCE_ID; i++) {
-            _costs[i] = _building.Cost[currentTier + 1][i] - ((_building.Cost[currentTier + 1][i] * reducedCost) / 100);
+            _costs[i] = _building.Cost[currentTier][i] - ((_building.Cost[currentTier][i] * reducedCost) / 100);
         }
 
         LibResources.spendResources(cityId, _costs, autoClaim);

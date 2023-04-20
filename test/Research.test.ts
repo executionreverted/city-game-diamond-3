@@ -193,11 +193,13 @@ describe("Test1",
 
         it("building time and cost reduce works", async () => {
             const building = await buildings.buildingInfo(0)
-            console.log(building.Cost);
+
+            console.log("wood cost: ");
+            console.log(building.Cost[1][1]);
             console.log("base time: ");
             console.log(building.UpgradeTime[1].toNumber());
             const bal1 = await resources.cityResources(1, 1)
-            console.log("pre bal:");
+            console.log("pre wood bal:");
             console.log(bal1.toNumber());
 
             await cityManager.upgradeBuilding(cityId, 0, false)
@@ -210,7 +212,7 @@ describe("Test1",
             const timeReq = completions[0] - timeStamp
             console.log({ timeReq });
             const bal2 = await resources.cityResources(1, 1)
-            console.log("post bal:");
+            console.log("post wood bal:");
             console.log(bal2.toNumber())
             console.log("diff");
             console.log(bal1.sub(bal2).toNumber());
