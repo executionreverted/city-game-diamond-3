@@ -207,7 +207,7 @@ library LibTroopCommands {
 
         if (result == 0 || result == 1) {
             plunderResources(capacity, cityId, attacker.ControlledBy, plunder);
-        } else revert("no win");
+        }
         emit CityFight(attacker.ID, attacker.ControlledBy, cityId, result, atkCasualties, defCasualties);
         /* if (result == 0) {
             // atk side win

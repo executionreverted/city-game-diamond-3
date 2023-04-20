@@ -8,6 +8,7 @@ let cities: CityNFTFacet;
 let gameWorld: WorldFacet;
 let gameWorld2: WorldFacet;
 let cityManager: CityManagerFacet;
+let cityManager2: CityManagerFacet;
 let troops: TroopsManagerFacet;
 let troopsManager: TroopsManagerFacet;
 let troopsManager2: TroopsManagerFacet;
@@ -44,6 +45,7 @@ describe("CityBattle", function () {
         gameWorld = await ethers.getContractAt("WorldFacet", diamond) as any
         gameWorld2 = await ethers.getContractAt("WorldFacet", diamond, owner2) as any
         cityManager = await ethers.getContractAt("CityManagerFacet", diamond) as any
+        cityManager2 = await ethers.getContractAt("CityManagerFacet", diamond, owner2) as any
         troops = await ethers.getContractAt("TroopsManagerFacet", diamond) as any
         troopsManager = await ethers.getContractAt("TroopsManagerFacet", diamond) as any
         troopsMovement = await ethers.getContractAt("TroopMovementsFacet", diamond) as any
@@ -68,29 +70,29 @@ describe("CityBattle", function () {
         // await resources.setGameManager(owner.address, true)
         for (let i = 0; i < 5; i++) {
             await resources.addResource(cityId, i, 50000)
-            await resources.addResource(cityId + 1, i, 1000)
+            await resources.addResource(cityId + 1, i, 5000)
         }
         for (let i = 0; i < 5; i++) {
             expect((await resources.cityResources(cityId, i)).eq(50000)).to.be.true
-            expect((await resources.cityResources(cityId + 1, i)).eq(1000)).to.be.true
+            expect((await resources.cityResources(cityId + 1, i)).eq(5000)).to.be.true
         }
         await resources.addResource(cityId + 1, 4, 1000)
-        console.log(await cities.ownerOf(0));
-        console.log(await cities.ownerOf(1));
-        console.log(await cities.ownerOf(2));
-        console.log(await cities.ownerOf(3));
-        console.log(await cities.ownerOf(4));
+
     });
 
     it("give premium", async () => {
-        await gameWorld.createCity(desiredCoords, true, 1)
-        await cityManager.setPremiumStatus(1, 1, 1)
-        await cityManager.setPremiumStatus(2, 1, 1)
+        await cityManager.setPremiumStatus(1, 1, 5)
+        await cityManager.setPremiumStatus(2, 1, 5)
         const status = await cityManager.premiumStatus(1)
         console.log('City has premium tier: ', status._tier.toNumber());
 
         expect(status._tier.toNumber()).to.eq(1)
         expect(status._expirationDate.toNumber()).to.gt(0)
+        const status2 = await cityManager.premiumStatus(2)
+        console.log('City has premium tier: ', status2._tier.toNumber());
+
+        expect(status2._tier.toNumber()).to.eq(1)
+        expect(status2._expirationDate.toNumber()).to.gt(0)
     })
     it("Upgrade barracks", async function () {
         console.log('1');
@@ -101,13 +103,7 @@ describe("CityBattle", function () {
             );
         }
         await cityManager.upgradeBuilding(cityId, barracksId, true)
-        console.log('2');
-        console.log("City Blaances after upgrade: ");
-        for (let index = 0; index < 5; index++) {
-            console.log(
-                await resources.cityResources(cityId, index)
-            );
-        }
+        await cityManager2.upgradeBuilding(cityId + 1, barracksId, true)
         let hasError
         try {
             await cityManager.upgradeBuilding(cityId, barracksId, true)
@@ -118,26 +114,25 @@ describe("CityBattle", function () {
         await time.increase(await (await buildings.buildingInfo(barracksId)).UpgradeTime[0].add(1).toNumber());
         const barracksLvL = await cityManager.buildingLevel(cityId, barracksId)
         expect(barracksLvL.eq(1)).to.be.true
+        const barracksLvL2 = await cityManager.buildingLevel(cityId + 1, barracksId)
+        expect(barracksLvL2.eq(1)).to.be.true
     })
 
     it("Mint 100 soldier", async function () {
         const [owner] = await ethers.getSigners();
         await troopsManager.recruitTroops(cityId, [0], [1000], true)
+        await troopsManager2.recruitTroops(cityId + 1, [0], [5], true)
         const trn = await troopsManager.cityActiveTrainings(cityId)
         expect(trn.length).to.eq(1)
         const timeStamp = (await ethers.provider.getBlock("latest")).timestamp
-        await time.increase(trn[0].EndTime.sub(timeStamp).add(1))
+        await time.increase(trn[0].EndTime.sub(timeStamp).add(100))
         await troopsManager.finalizeTraining(cityId, 0);
 
-        await troopsManager2.recruitTroops(cityId + 1, [0], [5], true)
-        const trn2 = await troopsManager2.cityActiveTrainings(cityId)
-        expect(trn.length).to.eq(1)
-        const timeStamp2 = (await ethers.provider.getBlock("latest")).timestamp
-        await time.increase(trn[0].EndTime.sub(timeStamp2).add(1))
-        await troopsManager2.finalizeTraining(cityId, 1);
-
+        const trn2 = await troopsManager2.cityActiveTrainings(cityId + 1)
+        expect(trn2.length).to.eq(1)
+        await troopsManager2.finalizeTraining(cityId + 1, 1);
         expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(1000)
-        expect((await troopsManager.cityTroops(cityId + 1, 0)).toNumber()).to.eq(5)
+        expect((await troopsManager2.cityTroops(cityId + 1, 0)).toNumber()).to.eq(5)
     });
 
     it("Send squad to enemy city", async function () {

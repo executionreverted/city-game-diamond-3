@@ -65,6 +65,9 @@ library LibCalculator {
         Attacker casualties = (Attacker army power / Defender army power) * Defender casualties
     */
     function attackerCasualties(uint atkArmyPower, uint defArmyPower, bool atkHasWon, bool draw) internal pure returns (uint) {
+        if (atkArmyPower == 0 && defArmyPower == 0) return 0;
+        if (atkArmyPower == 0) atkArmyPower = 1;
+        if (defArmyPower == 0) defArmyPower = 1;
         uint amount;
         if (atkArmyPower < defArmyPower) {
             amount = percent(atkArmyPower, defArmyPower, Precision);
@@ -95,6 +98,9 @@ library LibCalculator {
     Defender casualties = (Defender army power / Attacker army power) * Attacker casualties 
     */
     function defenderCasualties(uint atkArmyPower, uint defArmyPower, bool atkHasWon, bool draw) internal pure returns (uint) {
+        if (atkArmyPower == 0 && defArmyPower == 0) return 0;
+        if (atkArmyPower == 0) atkArmyPower = 1;
+        if (defArmyPower == 0) defArmyPower = 1;
         uint amount;
         if (atkArmyPower > defArmyPower) {
             amount = percent(defArmyPower, atkArmyPower, Precision);
