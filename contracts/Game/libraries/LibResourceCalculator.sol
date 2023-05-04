@@ -24,7 +24,7 @@ library LibResourceCalculator {
     }
 
     function claimResource(AppStorage storage s, uint cityId, Resource resource, uint limit) internal {
-        (uint resourceBoostAmount,) = resourceResearchBonus(cityId);
+        (uint resourceBoostAmount, ) = resourceResearchBonus(cityId);
         LibResourceCalculator._claimSingle(s, cityId, resource, limit, resourceBoostAmount);
     }
 
@@ -57,12 +57,24 @@ library LibResourceCalculator {
         // check building lvl, check plot info
         if (resource == Resource.WOOD) {
             buildingLvl = s.BuildingLevels[cityId][1].Tier;
-        } else if (resource == Resource.FOOD) {
+            if (block.timestamp < s.BuildingLevelActivationTime[cityId][1]) {
+                buildingLvl -= 1;
+            }
+        } else if (resource == Resource.STONE) {
             buildingLvl = s.BuildingLevels[cityId][2].Tier;
+            if (block.timestamp < s.BuildingLevelActivationTime[cityId][2]) {
+                buildingLvl -= 1;
+            }
         } else if (resource == Resource.IRON) {
             buildingLvl = s.BuildingLevels[cityId][3].Tier;
-        } else if (resource == Resource.STONE) {
+            if (block.timestamp < s.BuildingLevelActivationTime[cityId][3]) {
+                buildingLvl -= 1;
+            }
+        } else if (resource == Resource.FOOD) {
             buildingLvl = s.BuildingLevels[cityId][4].Tier;
+            if (block.timestamp < s.BuildingLevelActivationTime[cityId][4]) {
+                buildingLvl -= 1;
+            }
         }
         uint productionAmount = productionRate(
             s,
@@ -75,6 +87,10 @@ library LibResourceCalculator {
 
     function productionRate(AppStorage storage s, ProductionArgs memory _args) internal view returns (uint) {
         if (_args.buildingLvl == 0) return 0;
+        if (_args.buildingLvl == 1) {
+            uint p = s.BaseProductions[uint(_args.resource)];
+            return p + (p * _args.boostAmount) / 100;
+        }
         uint production = s.BaseProductions[uint(_args.resource)] + ((s.BaseProductions[uint(_args.resource)] * (_args.buildingLvl - 1) * 80) / 100);
 
         // uint allBoostAmount;

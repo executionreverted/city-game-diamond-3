@@ -53,7 +53,6 @@ export async function deployDiamond() {
         const facet = await Facet.deploy()
         await facet.deployed()
         console.log(`${FacetName} deployed: ${facet.address}`)
-
         cut.push({
             facetAddress: facet.address,
             action: FacetCutAction.Add,
@@ -76,61 +75,6 @@ export async function deployDiamond() {
         throw Error(`Diamond upgrade failed: ${tx.hash}`)
     }
     console.log('Completed diamond cut')
-
-    // let facetInstance: Test1Facet = await ethers.getContractAt("Test1Facet", diamond.address) as any
-    // console.log('V1 Facet calls:');
-    // console.log(await facetInstance.test1Func2());
-    // await facetInstance.test1Func1()
-    // console.log(' call  await facetInstance.test1Func1() ');
-    // console.log(await facetInstance.test1Func2());
-
-
-    // const facets: FacetsAndAddSelectors[] = [
-    //   {
-    //     facetName: "Test1FacetV2",
-    //     addSelectors: [
-    //       'function test1Func3(uint value) external',
-    //       'function test1Func4() external view'],
-    //     removeSelectors: [
-    //       'function test1Func1() external',
-    //       'function test1Func2() external view'
-    //     ],
-    //   },
-    // ];
-
-    // const joined = convertFacetAndSelectorsToString(facets);
-
-    // const args: DeployUpgradeTaskArgs = {
-    //   diamondUpgrader: diamond.address,
-    //   diamondAddress: diamond.address,
-    //   facetsAndAddSelectors: joined,
-    //   useLedger: false,
-    //   useMultisig: false,
-    // };
-
-    // await run("deployUpgrade", args);
-
-    // let facetInstanceV2: Test1FacetV2 = await ethers.getContractAt("Test1FacetV2", diamond.address) as any
-    // try {
-    //   // @ts-ignore
-    //   console.log(await facetInstance.test1Func2());
-    // } catch (error) {
-    //   console.log('error');
-    //   console.log(error);
-    // }
-
-    // console.log('V2 Facet calls:');
-    // console.log(
-    //   await facetInstanceV2.test1Func4()
-    // );
-
-    // await facetInstanceV2.test1Func3(42069420)
-    // console.log(' call  await facetInstance.test1Func4(42069420) ');
-    // console.log(await facetInstanceV2.test1Func4());
-
-
-    // let ownershipFacetInstance: OwnershipFacet = await ethers.getContractAt("OwnershipFacet", diamond.address) as any
-    // console.log(await ownershipFacetInstance.owner());
-
+    console.log(diamond.address);
     return diamond.address
 }

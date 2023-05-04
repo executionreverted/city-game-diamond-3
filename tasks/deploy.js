@@ -1,7 +1,5 @@
-import { ethers } from "hardhat"
-import { getSelectors, FacetCutAction } from '../scripts/libraries/diamond'
-
-export async function deployDiamond() {
+const { getSelectors, FacetCutAction } = require('../scripts/libraries/diamond')
+module.exports = async function deployDiamond() {
     const accounts = await ethers.getSigners()
     const contractOwner = accounts[0]
 

@@ -17,9 +17,9 @@ library LibBuildings {
     function buildingInfo(uint buildingId) internal view returns (Building memory) {
         if (buildingId == 0) return TownHall();
         if (buildingId == 1) return Forest();
-        if (buildingId == 2) return Farms();
-        if (buildingId == 3) return Mines();
-        if (buildingId == 4) return Quarry();
+        if (buildingId == 2) return Mines();
+        if (buildingId == 3) return Quarry();
+        if (buildingId == 4) return Farms();
         if (buildingId == 5) return Warehouse();
         if (buildingId == 6) return Barracks();
         if (buildingId == 7) return Workshop();

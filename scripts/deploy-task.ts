@@ -1,7 +1,31 @@
-import { ethers } from "hardhat"
-import { getSelectors, FacetCutAction } from '../scripts/libraries/diamond'
+import hre, { ethers, deployments } from "hardhat";
+import { FacetCutAction, get, getSelector, getSelectors } from "./libraries/diamond";
+
+
 
 export async function deployDiamond() {
+    const { deployments, getNamedAccounts } = hre;
+    const { getArtifact } = deployments
+    // @ts-ignore
+    const FacetNames = [
+        'BuildingsFacet',
+        'CalculatorFacet',
+        'CityManagerFacet',
+        'CityNFTFacet',
+        'PerlinNoiseFacet',
+        'ResearchManagerFacet',
+        'ResearchsFacet',
+        'ResourcesFacet',
+        'TrigonometryFacet',
+        'TroopCommandsFacet',
+        'TroopMovementsFacet',
+        'TroopsManagerFacet',
+        'WorldFacet',
+    ]
+
+   
+
+
     const accounts = await ethers.getSigners()
     const contractOwner = accounts[0]
 

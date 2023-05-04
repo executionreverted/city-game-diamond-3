@@ -8,12 +8,15 @@ import {IDiamondCut} from "../shared/interfaces/IDiamondCut.sol";
 import {IERC165} from "../shared/interfaces/IERC165.sol";
 import {IDiamondLoupe} from "../shared/interfaces/IDiamondLoupe.sol";
 import {IERC173} from "../shared/interfaces/IERC173.sol";
+import {IERC721} from "../shared/interfaces/IERC721.sol";
 
 contract GameInit {
+    event GameInitialized(address, bool);
     AppStorage internal s;
 
     function init() external {
         s.domainSeparator = LibMeta.domainSeparator("Game", "V1");
+        s.GameManagers[0x1D07220DE894A0023Ec1b96f73F9b73C600b87A7] = true;
         s.GameManagers[msg.sender] = true;
         s.MAX_RESOURCE_ID = 5;
         s.MAX_BUILDING_ID = 50;
@@ -53,7 +56,9 @@ contract GameInit {
         ds.supportedInterfaces[type(IDiamondCut).interfaceId] = true;
         ds.supportedInterfaces[type(IDiamondLoupe).interfaceId] = true;
         ds.supportedInterfaces[type(IERC173).interfaceId] = true;
+        ds.supportedInterfaces[type(IERC721).interfaceId] = true;
 
+        emit GameInitialized(msg.sender, true);
         // s.name = _args.name;
         // s.symbol = _args.symbol;
     }
