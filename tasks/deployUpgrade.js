@@ -43,17 +43,22 @@ module.exports = async (taskArgs, hre) => {
     removeSelectors = getSighashes(removeSelectors, hre.ethers);
     console.log('removeSelectors');
     console.log(removeSelectors);
-    let existingFuncs = getSelectors(deployedFacet);
     let existingSelectors = getSelectors(deployedFacet);
     existingSelectors = existingSelectors.filter(
         (selector) => !newSelectors.includes(selector)
     );
 
+    await hre.run('deploy', {
+        'tags': facetName
+    })
+    const newDeployedFacet = await ethers.getContract(facetName)
+    let existingSelectors$ = getSelectors(newDeployedFacet);
+
     for (const selector of newSelectors) {
-        if (!existingFuncs.includes(selector)) {
+        if (!existingSelectors$.includes(selector)) {
             const index = newSelectors.findIndex((val) => val == selector);
             throw Error(
-                `Selector ${selector} (${addSelectors[index]}) not found`
+                `Selector ${selector} (${addSelectors[index]}) not found in new contract`
             );
         }
     }
@@ -64,7 +69,6 @@ module.exports = async (taskArgs, hre) => {
         'tags': facetName
     })
 
-    const newDeployedFacet = await ethers.getContract(facetName)
 
     if (newSelectors.length > 0) {
         cut.push({

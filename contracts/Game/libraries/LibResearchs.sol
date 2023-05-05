@@ -35,7 +35,7 @@ library LibResearchs {
         if (researchId == 48) return MarchMarch();
         if (researchId == 49) return ProtectionII();
         if (researchId == 50) return SteamEnginesMachineries();
-        revert("not implemented");
+        // revert("not implemented");
     }
 
     function SettledLife() internal pure returns (Research memory _baseResearch) {

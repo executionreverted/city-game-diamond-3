@@ -103,4 +103,15 @@ contract ResearchManagerFacet is Modifiers {
         }
         return result;
     }
+
+    function researchCompletionTimes(uint cityId, uint[] memory researchIds) external view returns (uint[] memory) {
+        uint[] memory result = new uint[](researchIds.length);
+        for (uint i = 0; i < researchIds.length; ) {
+            result[i] = s.CityResearchesValidAfter[cityId][researchIds[i]];
+            unchecked {
+                i++;
+            }
+        }
+        return result;
+    }
 }

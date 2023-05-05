@@ -10,11 +10,18 @@ import "../shared/Errors.sol";
 
 contract ResearchsFacet is Modifiers {
     function allResearchs() external pure returns (Research[] memory) {
-        Research[] memory _result = new Research[](15);
-        for (uint i = 0; i < 15; i++) {
-            _result[i] = LibResearchs.researchInfo(i);
+        Research[] memory _result = new Research[](250);
+        for (uint i = 0; i < 250; i++) {
+            _result[i] = LibResearchs.researchInfo(i + 1);
         }
+        return _result;
+    }
 
+    function getResearchs(uint[] memory _ids) external pure returns (Research[] memory) {
+        Research[] memory _result = new Research[](_ids.length);
+        for (uint i = 0; i < _ids.length; i++) {
+            _result[i] = LibResearchs.researchInfo(_ids[i]);
+        }
         return _result;
     }
 
