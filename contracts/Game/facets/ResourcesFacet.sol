@@ -53,11 +53,15 @@ contract ResourcesFacet is Modifiers {
     }
 
     function harvestableResources(uint256 cityId) external view returns (uint256[] memory) {
+        uint[] memory limits = getCityStorage(cityId);
         uint[] memory claimable = new uint[](s.MAX_RESOURCE_ID);
         (uint resourceBoostAmount, uint goldBoost) = resourceResearchBonus(cityId);
         claimable[0] = LibResourceCalculator.calculateHarvestableResource(s, cityId, Resource(0), resourceBoostAmount + goldBoost);
         for (uint i = 1; i < claimable.length; i++) {
             claimable[i] = LibResourceCalculator.calculateHarvestableResource(s, cityId, Resource(i), resourceBoostAmount);
+            if (claimable[i] > limits[i]) {
+                claimable[i] = limits[i];
+            }
         }
         return claimable;
     }
