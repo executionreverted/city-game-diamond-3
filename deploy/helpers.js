@@ -14,6 +14,7 @@ function getSelectors(contract) {
     selectors.get = get
     return selectors
 }
+
 module.exports.getSelectors = getSelectors
 
 function getSelector(func) {

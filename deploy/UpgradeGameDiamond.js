@@ -17,9 +17,18 @@ const FacetNames = [
 ]
 
 module.exports = async function ({ deployments, getNamedAccounts }) {
+    const FacetName = "ResourcesFacet"
     const { deploy } = deployments
     const { deployer } = await getNamedAccounts()
     console.log(`>>> your address: ${deployer}`)
+    const newFacet = await deploy(FacetName, {
+        from: deployer,
+        args: [],
+        log: true,
+        waitConfirmations: 1,
+    })
+    console.log(`deployed ${FacetName}`);
+
     const DiamondCutFacet = await deploy("DiamondCutFacet", {
         from: deployer,
         args: [],
@@ -50,11 +59,10 @@ module.exports = async function ({ deployments, getNamedAccounts }) {
 
 
     const cut = []
-    const FacetName = "ResourcesFacet"
     const facet = await ethers.getContract(FacetName)
     console.log(`${FacetName} deployed: ${facet.address}`)
     cut.push({
-        facetAddress: facet.address,
+        facetAddress: newFacet.address,
         action: FacetCutAction.Replace,
         functionSelectors: getSelectors(facet)
     })
@@ -66,9 +74,9 @@ module.exports = async function ({ deployments, getNamedAccounts }) {
     let receipt
     // call to init function
     let diamondInit = await ethers.getContractAt("GameInit", DiamondInit.address)
-    let functionCall = diamondInit.interface.encodeFunctionData('init')
-    // tx = await diamondCut.diamondCut(cut, diamondInit.address, functionCall)
-    tx = await diamondCut.diamondCut([], diamondInit.address, functionCall)
+    let functionCall = await diamondInit.interface.encodeFunctionData('init')
+    tx = await diamondCut.diamondCut(cut, diamondInit.address, functionCall)
+    // tx = await diamondCut.diamondCut([], diamondInit.address, functionCall)
     console.log('Diamond cut tx: ', tx.hash)
     receipt = await tx.wait()
     if (!receipt.status) {
