@@ -120,7 +120,7 @@ describe("CityBattle", function () {
 
     it("Mint 100 soldier", async function () {
         const [owner] = await ethers.getSigners();
-        await troopsManager.recruitTroops(cityId, [0], [1000], true)
+        await troopsManager.recruitTroops(cityId, [0], [50], true)
         await troopsManager2.recruitTroops(cityId + 1, [0], [5], true)
         const trn = await troopsManager.cityActiveTrainings(cityId)
         expect(trn.length).to.eq(1)
@@ -131,15 +131,15 @@ describe("CityBattle", function () {
         const trn2 = await troopsManager2.cityActiveTrainings(cityId + 1)
         expect(trn2.length).to.eq(1)
         await troopsManager2.finalizeTraining(cityId + 1, 1);
-        expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(1000)
+        expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(50)
         expect((await troopsManager2.cityTroops(cityId + 1, 0)).toNumber()).to.eq(5)
     });
 
     it("Send squad to enemy city", async function () {
         const foodId = 4;
-        const troopToSend = 100
+        const troopToSend = 25
         await troopsMovement.sendSquadTo(cityId, atkCityCoords, [0], [troopToSend], 2)
-        expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(1000 - troopToSend, "soldier sent")
+        expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(50 - troopToSend, "soldier sent")
         expect((await troopsManager.cityTroops(cityId + 1, 0)).toNumber()).to.eq(5, "soldier waits in city")
     });
 
