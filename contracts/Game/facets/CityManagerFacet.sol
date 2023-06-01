@@ -14,10 +14,6 @@ import {Race} from "../shared/CityEnums.sol";
 import {Research} from "../shared/ResearchStructs.sol";
 import {ResearchBonusType} from "../shared/ResearchEnums.sol";
 import "../shared/Errors.sol";
-//  LibResourceCalculator.claimAllResources(s, cityId, limits);
-
-// Access Control
-import "../../shared/interfaces/IERC173.sol";
 
 contract CityManagerFacet is Modifiers {
     event BuildingUpgraded(uint indexed cityId, uint indexed buildingId, uint newTier, uint when);

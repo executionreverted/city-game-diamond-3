@@ -1,6 +1,7 @@
 const { FacetCutAction, getSelectors } = require('./helpers')
 
 const FacetNames = [
+    'DelegationFacet',
     'BuildingsFacet',
     'CalculatorFacet',
     'CityManagerFacet',

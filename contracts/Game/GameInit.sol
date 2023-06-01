@@ -16,7 +16,7 @@ contract GameInit {
 
     function init() external {
         s.domainSeparator = LibMeta.domainSeparator("Game", "V1");
-        s.GameManagers[0x1D07220DE894A0023Ec1b96f73F9b73C600b87A7] = true;
+        // s.GameManagers[0x1D07220DE894A0023Ec1b96f73F9b73C600b87A7] = true;
         s.GameManagers[msg.sender] = true;
         s.MAX_RESOURCE_ID = 5;
         s.MAX_BUILDING_ID = 50;
@@ -51,6 +51,7 @@ contract GameInit {
         s.ACTION_RANGE = 3;
         s.RESEARCH_CENTER_ID = 9;
         s.MAX_TRAINING = 15;
+        s.baseURI = "https://mygame.com/api/token/";
         // adding ERC165 data
         ds.supportedInterfaces[type(IERC165).interfaceId] = true;
         ds.supportedInterfaces[type(IDiamondCut).interfaceId] = true;

@@ -5,9 +5,6 @@ import {Modifiers} from "../libraries/LibAppStorage.sol";
 import {LibCalculator} from "../libraries/LibCalculator.sol";
 import {Coords} from "../shared/WorldStructs.sol";
 
-// Access Control
-import "../../shared/interfaces/IERC173.sol";
-
 contract CalculatorFacet is Modifiers {
     /*     
         Army power = (Number of soldiers * Attack power * Defense power * Health) * Morale bonus

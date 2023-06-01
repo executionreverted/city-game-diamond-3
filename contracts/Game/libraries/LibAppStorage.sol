@@ -16,6 +16,7 @@ uint constant MAX_TROOP_ID = 100;
 struct AppStorage {
     // CORE & CONTRACTS & CONSTANTS
     bytes32 domainSeparator;
+    string baseURI;
     mapping(address => bool) GameManagers;
     // ICities CitiesNFT;
     // ICityManager CityManager;
@@ -29,6 +30,7 @@ struct AppStorage {
     uint MAX_BUILDING_ID;
     uint POPULATION_CAP_PER_TOWNHALL_TIER;
     // CITY
+    mapping(address => address) Delegations;
     mapping(uint => City) CityList;
     mapping(uint => uint) PopulationClaimDates;
     mapping(uint => uint[50]) BuildingLevelActivationTime;
@@ -116,19 +118,22 @@ contract Modifiers {
     modifier onlyOwner() {
         LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
         address sender = LibMeta.msgSender();
-        require(sender == ds.contractOwner, "Only manager can call this function");
+        require(sender == ds.contractOwner, "Only owner");
         _;
     }
 
     modifier onlyManager() {
         address sender = LibMeta.msgSender();
-        require(s.GameManagers[sender], "Only manager can call this function");
+        require(s.GameManagers[sender], "Only manager");
         _;
     }
 
     modifier onlyCityOwner(uint cityId) {
         address sender = LibMeta.msgSender();
-        require(s.CityList[cityId].Operator == sender, "Only city operator can call this function");
+        require(
+            s.CityList[cityId].Operator == sender || s.Delegations[s.CityList[cityId].Operator] == sender,
+            "Only city operator or delegated address can"
+        );
         _;
     }
 }

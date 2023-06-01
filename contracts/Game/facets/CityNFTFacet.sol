@@ -10,13 +10,7 @@ import {Coords} from "../shared/WorldStructs.sol";
 import {City, Building} from "../shared/CityStructs.sol";
 import {Race} from "../shared/CityEnums.sol";
 
-// Access Control
-import "../../shared/interfaces/IERC173.sol";
-
 contract CityNFTFacet is Modifiers {
-
-    
-
     ///@notice Query the universal totalSupply of all NFTs ever minted
     ///@return totalSupply_ the number of all NFTs that have been minted
     function totalSupply() public view returns (uint256 totalSupply_) {
@@ -216,7 +210,7 @@ contract CityNFTFacet is Modifiers {
     /// @dev Throws if `_tokenId` is not a valid NFT. URIs are defined in RFC
     ///  3986. The URI may point to a JSON file that conforms to the "ERC721
     ///  Metadata JSON Schema".
-    function tokenURI(uint256 _tokenId) external pure returns (string memory) {
-        return LibStrings.strWithUint("https://app.uri.com/", _tokenId); //Here is your URL!
+    function tokenURI(uint256 _tokenId) external view returns (string memory) {
+        return LibStrings.strWithUint(s.baseURI, _tokenId); //Here is your URL!
     }
 }
