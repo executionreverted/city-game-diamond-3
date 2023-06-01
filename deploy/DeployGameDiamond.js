@@ -69,8 +69,8 @@ module.exports = async function ({ deployments, getNamedAccounts }) {
     // call to init function
     let diamondInit = await ethers.getContractAt("GameInit", DiamondInit.address)
     let functionCall = diamondInit.interface.encodeFunctionData('init')
-    // tx = await diamondCut.diamondCut(cut, diamondInit.address, functionCall)
-    tx = await diamondCut.diamondCut([], diamondInit.address, functionCall)
+    tx = await diamondCut.diamondCut(cut, diamondInit.address, functionCall)
+    // tx = await diamondCut.diamondCut([], diamondInit.address, functionCall)
     console.log('Diamond cut tx: ', tx.hash)
     receipt = await tx.wait()
     if (!receipt.status) {
@@ -82,4 +82,4 @@ module.exports = async function ({ deployments, getNamedAccounts }) {
 }
 
 module.exports.tags = ["DeployGameDiamond"]
-// module.exports.dependencies = ["BuildingsFacet", "CalculatorFacet", "CityManagerFacet", "CityNFTFacet", "PerlinNoiseFacet", "ResearchManagerFacet", "ResearchsFacet", "ResourcesFacet", "TrigonometryFacet", "TroopCommandsFacet", "TroopMovementsFacet", "TroopsManagerFacet", "WorldFacet"]
+module.exports.dependencies = ["BuildingsFacet", "CalculatorFacet", "CityManagerFacet", "CityNFTFacet", "DelegationFacet", "PerlinNoiseFacet", "ResearchManagerFacet", "ResearchsFacet", "ResourcesFacet", "TrigonometryFacet", "TroopCommandsFacet", "TroopMovementsFacet", "TroopsManagerFacet", "WorldFacet"]

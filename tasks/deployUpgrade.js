@@ -31,7 +31,14 @@ module.exports = async (taskArgs, hre) => {
 
     //Create the cut
     const cut = [];
-    const deployedFacet = await ethers.getContract(facetName)
+    let deployedFacet = await ethers.getContract(facetName)
+    if (!deployedFacet || deployedFacet?.address) {
+        await hre.run('deploy', {
+            'tags': facetName
+        })
+        deployedFacet = await ethers.getContract(facetName)
+    }
+    
     console.log(
         `Current Deployed Facet Address for ${facetName}:`,
         deployedFacet.address

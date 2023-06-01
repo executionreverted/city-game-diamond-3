@@ -1,6 +1,7 @@
 // @ts-nocheck
 
 const FacetNames = [
+    'DelegationFacet',
     'GameInit',
     'BuildingsFacet',
     'CalculatorFacet',

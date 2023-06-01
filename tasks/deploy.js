@@ -27,6 +27,7 @@ module.exports = async function deployDiamond() {
     console.log('')
     console.log('Deploying facets')
     const FacetNames = [
+        'DelegationFacet',
         'BuildingsFacet',
         'CalculatorFacet',
         'CityManagerFacet',
