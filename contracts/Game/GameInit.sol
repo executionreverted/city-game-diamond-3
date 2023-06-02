@@ -25,7 +25,8 @@ contract GameInit {
         s.BASE_RESOURCE_SPAWN_AMOUNT = 100;
         s.MAX_PLOT_TIER = 5;
         s.DISTANCE_PER_PLOT = 2000;
-        s.DISTANCE_TIME;
+        s.DISTANCE_TIME = 2 minutes;
+        s.MAX_AWAY_FROM = 30;
         s.PERLIN_05 = 32768;
         s.PERLIN_1 = 32768 * 2;
         s.NOISE_AMOUNT = 15;

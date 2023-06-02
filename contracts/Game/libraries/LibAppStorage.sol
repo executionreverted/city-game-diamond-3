@@ -57,6 +57,7 @@ struct AppStorage {
     uint MAX_PLOT_TIER;
     uint DISTANCE_PER_PLOT;
     uint DISTANCE_TIME;
+    int MAX_AWAY_FROM;
     int PERLIN_05;
     int PERLIN_1;
     int NOISE_AMOUNT;

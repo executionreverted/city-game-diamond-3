@@ -20,15 +20,15 @@ contract WorldFacet is Modifiers {
         if ((!isEmpty && !pickClosest) || ((coords.X == 0 && coords.Y == 0))) revert ErrorInvalidWorldCoordinates(coords.X, coords.Y);
 
         if (coords.X > 0) {
-            if (coords.X - 100 > s.WorldState.LastXPositive) revert ErrorInvalidWorldCoordinates(coords.X, coords.Y);
+            if (coords.X - s.MAX_AWAY_FROM > s.WorldState.LastXPositive) revert ErrorInvalidWorldCoordinates(coords.X, coords.Y);
         } else {
-            if (coords.X + 100 < s.WorldState.LastXNegative) revert ErrorInvalidWorldCoordinates(coords.X, coords.Y);
+            if (coords.X + s.MAX_AWAY_FROM < s.WorldState.LastXNegative) revert ErrorInvalidWorldCoordinates(coords.X, coords.Y);
         }
 
         if (coords.Y > 0) {
-            if (coords.Y - 100 > s.WorldState.LastYPositive) revert ErrorInvalidWorldCoordinates(coords.X, coords.Y);
+            if (coords.Y - s.MAX_AWAY_FROM > s.WorldState.LastYPositive) revert ErrorInvalidWorldCoordinates(coords.X, coords.Y);
         } else {
-            if (coords.Y + 100 < s.WorldState.LastYNegative) revert ErrorInvalidWorldCoordinates(coords.X, coords.Y);
+            if (coords.Y + s.MAX_AWAY_FROM < s.WorldState.LastYNegative) revert ErrorInvalidWorldCoordinates(coords.X, coords.Y);
         }
 
         address to = LibMeta.msgSender();
