@@ -31,6 +31,7 @@ struct AppStorage {
     uint POPULATION_CAP_PER_TOWNHALL_TIER;
     // CITY
     mapping(address => address) Delegations;
+    mapping(address => address) BurnerToOwner;
     mapping(uint => City) CityList;
     mapping(uint => uint) PopulationClaimDates;
     mapping(uint => uint[50]) BuildingLevelActivationTime;
