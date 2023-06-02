@@ -26,7 +26,7 @@ library LibTroopsManager {
         // race stuff... determine ids of troops by race
         uint i;
         uint8 startTroop = 0 * uint8(race);
-        uint8 endTroop = 1 * uint8(race);
+        uint8 endTroop = 20 * uint8(race);
 
         uint8[] memory troopIds = new uint8[](endTroop - startTroop);
         uint[] memory amounts = new uint[](endTroop - startTroop);
